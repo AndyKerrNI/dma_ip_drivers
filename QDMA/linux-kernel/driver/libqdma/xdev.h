@@ -327,6 +327,10 @@ struct xlnx_dma_dev {
 	u64 ping_pong_lat_min;
 	/** avg ping_pong latency */
 	u64 ping_pong_lat_total;
+	/** user interrupt statistics */
+	unsigned long user_intr_count;
+	unsigned long user_intr_start_jiffies;
+	spinlock_t user_intr_lock;
 	/**< for upper layer calling function */
 	unsigned int dev_ulf_extra[0];
 

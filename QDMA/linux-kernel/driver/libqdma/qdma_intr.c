@@ -115,9 +115,19 @@ static irqreturn_t mbox_intr_handler(int irq_index, int irq, void *dev_id)
 static irqreturn_t user_intr_handler(int irq_index, int irq, void *dev_id)
 {
 	struct xlnx_dma_dev *xdev = dev_id;
+	unsigned long elapsed_ms;
+	unsigned long flags;
 
 	pr_debug("User IRQ fired on Funtion#%d: index=%d, vector=%d\n",
 		xdev->func_id, irq_index, irq);
+
+	/* Log user interrupt with timestamp */
+	spin_lock_irqsave(&xdev->user_intr_lock, flags);
+	xdev->user_intr_count++;
+	elapsed_ms = jiffies_to_msecs(jiffies - xdev->user_intr_start_jiffies);
+	pr_info("%s: User interrupt #%lu at %lu ms (vector=%d, index=%d)\n",
+		xdev->conf.name, xdev->user_intr_count, elapsed_ms, irq, irq_index);
+	spin_unlock_irqrestore(&xdev->user_intr_lock, flags);
 
 	if (xdev->conf.fp_user_isr_handler) {
 #ifndef __XRT__

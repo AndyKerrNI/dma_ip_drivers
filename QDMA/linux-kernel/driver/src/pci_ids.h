@@ -433,7 +433,7 @@ static const struct pci_device_id pci_ids[] = {
 	{ PCI_DEVICE(0x10ee, 0xb238), },	/** PF 2 */
 	{ PCI_DEVICE(0x10ee, 0xb338), },	/** PF 3 */
 	/** PCIe lane width x16 */
-	{ PCI_DEVICE(0x10ee, 0xb03f), },	/** PF 0 */
+	{ PCI_DEVICE(0x10ee, 0xb03c), },	/** PF 0 */
 	{ PCI_DEVICE(0x10ee, 0xb13f), },	/** PF 1 */
 	{ PCI_DEVICE(0x10ee, 0xb23f), },	/** PF 2 */
 	{ PCI_DEVICE(0x10ee, 0xb33f), },	/** PF 3 */

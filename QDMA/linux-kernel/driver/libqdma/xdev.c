@@ -630,6 +630,7 @@ static struct xlnx_dma_dev *xdev_alloc(struct qdma_dev_conf *conf)
 
 	spin_lock_init(&xdev->hw_prg_lock);
 	spin_lock_init(&xdev->lock);
+	spin_lock_init(&xdev->user_intr_lock);
 
 	/* create a driver to device reference */
 	memcpy(&xdev->conf, conf, sizeof(*conf));
@@ -1192,6 +1193,12 @@ int qdma_device_open(const char *mod_name, struct qdma_dev_conf *conf,
 	dbgfs_dev_init(xdev);
 #endif
 
+	/* Initialize user interrupt tracking */
+	spin_lock(&xdev->user_intr_lock);
+	xdev->user_intr_count = 0;
+	xdev->user_intr_start_jiffies = jiffies;
+	spin_unlock(&xdev->user_intr_lock);
+
 	*dev_hndl = (unsigned long)xdev;
 
 	return rv;
@@ -1268,6 +1275,16 @@ int qdma_device_close(struct pci_dev *pdev, unsigned long dev_hndl)
 	pci_disable_device(pdev);
 
 	xdev_list_remove(xdev);
+
+	/* Report user interrupt statistics */
+	spin_lock(&xdev->user_intr_lock);
+	if (xdev->user_intr_count > 0) {
+		unsigned long elapsed_ms =
+			jiffies_to_msecs(jiffies - xdev->user_intr_start_jiffies);
+		pr_info("%s: User interrupts - count: %lu, runtime: %lu ms\n",
+			xdev->conf.name, xdev->user_intr_count, elapsed_ms);
+	}
+	spin_unlock(&xdev->user_intr_lock);
 
 	kfree(xdev);
 

@@ -29,6 +29,10 @@
 #include <linux/pci.h>
 #include <linux/aer.h>
 #include <linux/vmalloc.h>
+#include <linux/miscdevice.h>
+#include <linux/uaccess.h>
+#include <linux/ioctl.h>
+#include <linux/eventfd.h>
 
 #include "nl.h"
 #include "libqdma/xdev.h"
@@ -71,6 +75,86 @@ MODULE_PARM_DESC(num_threads,
  */
 static LIST_HEAD(xpdev_list);
 static DEFINE_MUTEX(xpdev_mutex);
+
+#define QDMA_USER_INTR_DEV_NAME "qdma_user_intr"
+#define QDMA_USER_INTR_IOCTL_MAGIC	'q'
+#define QDMA_USER_INTR_IOCTL_SET_EVENTFD	_IOW(QDMA_USER_INTR_IOCTL_MAGIC, 1, int)
+
+static DEFINE_SPINLOCK(qdma_user_intr_eventfd_lock);
+static struct eventfd_ctx *qdma_user_intr_eventfd;
+
+static long qdma_user_intr_ioctl(struct file *file, unsigned int cmd,
+		unsigned long arg)
+{
+	int event_fd;
+	struct eventfd_ctx *new_ctx = NULL;
+	struct eventfd_ctx *old_ctx;
+	unsigned long flags;
+
+	(void)file;
+
+	if (cmd != QDMA_USER_INTR_IOCTL_SET_EVENTFD)
+		return -EINVAL;
+
+	if (copy_from_user(&event_fd, (int __user *)arg, sizeof(event_fd)))
+		return -EFAULT;
+
+	if (event_fd >= 0) {
+		new_ctx = eventfd_ctx_fdget(event_fd);
+		if (IS_ERR(new_ctx))
+			return PTR_ERR(new_ctx);
+	}
+
+	spin_lock_irqsave(&qdma_user_intr_eventfd_lock, flags);
+	old_ctx = qdma_user_intr_eventfd;
+	qdma_user_intr_eventfd = new_ctx;
+	spin_unlock_irqrestore(&qdma_user_intr_eventfd_lock, flags);
+
+	if (old_ctx)
+		eventfd_ctx_put(old_ctx);
+
+	return 0;
+}
+
+static const struct file_operations qdma_user_intr_fops = {
+	.owner = THIS_MODULE,
+	.unlocked_ioctl = qdma_user_intr_ioctl,
+#ifdef CONFIG_COMPAT
+	.compat_ioctl = qdma_user_intr_ioctl,
+#endif
+	.llseek = noop_llseek,
+};
+
+static struct miscdevice qdma_user_intr_miscdev = {
+	.minor = MISC_DYNAMIC_MINOR,
+	.name = QDMA_USER_INTR_DEV_NAME,
+	.fops = &qdma_user_intr_fops,
+	.mode = 0666,
+};
+
+#ifndef __XRT__
+static void qdma_user_intr_notify_handler(unsigned long dev_hndl,
+		unsigned long uld)
+#else
+static void qdma_user_intr_notify_handler(unsigned long dev_hndl,
+		int irq_index, unsigned long uld)
+#endif
+{
+	struct eventfd_ctx *eventfd_ctx;
+	unsigned long flags;
+
+	(void)dev_hndl;
+	(void)uld;
+#ifdef __XRT__
+	(void)irq_index;
+#endif
+
+	spin_lock_irqsave(&qdma_user_intr_eventfd_lock, flags);
+	eventfd_ctx = qdma_user_intr_eventfd;
+	if (eventfd_ctx)
+		eventfd_signal(eventfd_ctx);
+	spin_unlock_irqrestore(&qdma_user_intr_eventfd_lock, flags);
+}
 
 static int xpdev_qdata_realloc(struct xlnx_pci_dev *xpdev, unsigned int qmax);
 
@@ -1589,6 +1673,7 @@ static int probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	conf.qsets_base = -1;
 	conf.msix_qvec_max = 32;
 	conf.user_msix_qvec_max = 1;
+	conf.fp_user_isr_handler = qdma_user_intr_notify_handler;
 #ifdef __QDMA_VF__
 	conf.fp_flr_free_resource = qdma_flr_resource_free;
 #endif
@@ -1910,17 +1995,37 @@ static int __init qdma_mod_init(void)
 	if (rv < 0)
 		return rv;
 
-	return pci_register_driver(&pci_driver);
+	rv = misc_register(&qdma_user_intr_miscdev);
+	if (rv < 0)
+		return rv;
+
+	rv = pci_register_driver(&pci_driver);
+	if (rv < 0)
+		misc_deregister(&qdma_user_intr_miscdev);
+
+	return rv;
 }
 
 static void __exit qdma_mod_exit(void)
 {
+	struct eventfd_ctx *eventfd_ctx;
+	unsigned long flags;
+
 	/* unregister this driver from the PCI bus driver */
 	pci_unregister_driver(&pci_driver);
 
 	xlnx_nl_exit();
 
 	qdma_cdev_cleanup();
+
+	spin_lock_irqsave(&qdma_user_intr_eventfd_lock, flags);
+	eventfd_ctx = qdma_user_intr_eventfd;
+	qdma_user_intr_eventfd = NULL;
+	spin_unlock_irqrestore(&qdma_user_intr_eventfd_lock, flags);
+	if (eventfd_ctx)
+		eventfd_ctx_put(eventfd_ctx);
+
+	misc_deregister(&qdma_user_intr_miscdev);
 
 	libqdma_exit();
 }

@@ -1,0 +1,17 @@
+bin/
+*.o
+*.ko
+*.mod.c
+*.mod
+*.cmd
+*.symvers
+
+apps/dma-ctl/dma-ctl
+apps/dma-from-device/dma-from-device
+apps/dma-latency/dma-latency
+apps/dma-perf/dma-perf
+apps/dma-to-device/dma-to-device
+apps/dma-xfer/dma-xfer
+apps/dma-to-ps/dma-to-ps
+driver/src/libqdma
+modules.order
