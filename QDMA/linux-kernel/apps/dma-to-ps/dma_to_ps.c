@@ -20,6 +20,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <math.h>
 #include <time.h>
 
 #include <sys/mman.h>
@@ -50,6 +51,7 @@
 #define QDMA_USER_INTR_IOCTL_SET_EVENTFD _IOW(QDMA_USER_INTR_IOCTL_MAGIC, 1, int)
 
 static struct option const long_opts[] = {
+	{"count", required_argument, NULL, 'n'},
 	{"function", required_argument, NULL, 'u'},
 	{"payload-size", required_argument, NULL, 'p'},
 	{"help", no_argument, NULL, 'h'},
@@ -62,7 +64,8 @@ struct dma_message {
 	uint8_t payload[];
 };
 
-static int test_dma(char *devname, uint32_t payload_size);
+static int test_dma(char *devname, uint32_t payload_size,
+	uint32_t transaction_count);
 
 static int wait_for_user_interrupt(int event_fd)
 {
@@ -134,6 +137,8 @@ static void usage(const char *name)
 		"Write a DMA message to a fixed MM address and then trigger a PS interrupt using the QDMA request-submit path.\n\n");
 
 	fprintf(stdout,
+		"  -n (--count) number of DMA transactions to run for statistics (default 1)\n");
+	fprintf(stdout,
 		"  -u (--function) function number used to build /dev/qdma<func>-MM-0 (default 0x%x)\n",
 		FUNCTION_DEFAULT);
 	fprintf(stdout,
@@ -147,15 +152,26 @@ int main(int argc, char *argv[])
 	int cmd_opt;
 	char device_name[DEVICE_NAME_MAX];
 	uint64_t function = FUNCTION_DEFAULT;
+	uint64_t transaction_count_arg = 1;
 	uint64_t payload_size_arg = 0;
 	int payload_size_set = 0;
 
 	while ((cmd_opt =
-		getopt_long(argc, argv, "vhp:u:", long_opts,
+		getopt_long(argc, argv, "vhn:p:u:", long_opts,
 			    NULL)) != -1) {
 		switch (cmd_opt) {
 		case 0:
 			/* long option */
+			break;
+		case 'n':
+			transaction_count_arg = getopt_integer(optarg);
+			if (!transaction_count_arg ||
+			    transaction_count_arg > UINT32_MAX) {
+				fprintf(stderr,
+					"--count must be in range 1-%u\n",
+					UINT32_MAX);
+				exit(-EINVAL);
+			}
 			break;
 		case 'u':
 			/* Function number (e.g. 0x41000) */
@@ -193,15 +209,18 @@ int main(int argc, char *argv[])
 
 	if (verbose)
 		fprintf(stdout,
-		"dev %s, func 0x%lx, static_addr 0x%llx, payload_size %llu\n",
+		"dev %s, func 0x%lx, static_addr 0x%llx, payload_size %llu, count %llu\n",
 		device_name, function,
 		(unsigned long long)AXI_GPIO_0_WRITE,
-		(unsigned long long)payload_size_arg);
+		(unsigned long long)payload_size_arg,
+		(unsigned long long)transaction_count_arg);
 
-	return test_dma(device_name, (uint32_t)payload_size_arg);
+	return test_dma(device_name, (uint32_t)payload_size_arg,
+		(uint32_t)transaction_count_arg);
 }
 
-static int test_dma(char *devname, uint32_t payload_size)
+static int test_dma(char *devname, uint32_t payload_size,
+	uint32_t transaction_count)
 {
 	ssize_t rc;
 	uint32_t write_value = 0;
@@ -209,11 +228,18 @@ static int test_dma(char *devname, uint32_t payload_size)
 	struct dma_message *msg_data = NULL;
 	size_t msg_data_bytes = 0;
 	unsigned int i;
+	uint32_t txn;
 	struct timespec ts_start, ts_end;
 	int fpga_fd = open(devname, O_RDWR);
 	int intr_fd = -1;
 	int event_fd = -1;
-	double total_time = 0;
+	double sample_time = 0;
+	double latency_mean = 0;
+	double latency_m2 = 0;
+	double latency_stddev = 0;
+	double latency_min = 0;
+	double latency_max = 0;
+	double latency_jitter = 0;
 
 	if (fpga_fd < 0) {
 		fprintf(stderr, "unable to open device %s, %d.\n",
@@ -244,16 +270,6 @@ static int test_dma(char *devname, uint32_t payload_size)
 		goto out;
 	}
 
-	rc = read_to_buffer(devname, fpga_fd, (char *)&read_value,
-		sizeof(uint32_t), AXI_GPIO_0_BASE);
-	if (rc < 0)
-		goto out;
-
-	write_value = read_value + 1;
-
-	if (verbose)
-		fprintf(stdout, "host value = 0x%08x\n", write_value);
-
 	msg_data_bytes = sizeof(*msg_data) + payload_size;
 	msg_data = malloc(msg_data_bytes);
 	if (!msg_data) {
@@ -271,41 +287,98 @@ static int test_dma(char *devname, uint32_t payload_size)
 	 * cdev path into a qdma_request_submit() call.
 	 * This single 32-bit write is intended to trigger a PS-side interrupt.
 	 */
-	clock_gettime(CLOCK_MONOTONIC, &ts_start);
-	rc = write_from_buffer(devname, fpga_fd, (char *)msg_data,
-			msg_data_bytes, MAPPED_MSG_DATA_OFFSET);
-	if (rc < 0)
-		goto out;
-
-	rc = write_from_buffer(devname, fpga_fd, (char *)&write_value,
-			sizeof(uint32_t), AXI_GPIO_0_WRITE);
-	if (rc < 0)
-		goto out;
-
-	rc = wait_for_user_interrupt(event_fd);
-	if (rc < 0)
-		goto out;
-
-	write_value = 1;
-	rc = write_from_buffer(devname, fpga_fd, (char *)&write_value,
-			sizeof(uint32_t), AXI_GPIO_1_REARM);
-	if (rc < 0)
-		goto out;
-
-	rc = read_to_buffer(devname, fpga_fd, (char *)&read_value,
+	for (txn = 0; txn < transaction_count; txn++) {
+		rc = read_to_buffer(devname, fpga_fd, (char *)&read_value,
 			sizeof(uint32_t), AXI_GPIO_0_BASE);
-	if (rc < 0)
-		goto out;
+		if (rc < 0)
+			goto out;
 
-	rc = clock_gettime(CLOCK_MONOTONIC, &ts_end);
-	if (verbose)
-		printf("read back value = 0x%08x\n", read_value);
+		write_value = read_value + 1;
 
-	timespec_sub(&ts_end, &ts_start);
-	total_time = (ts_end.tv_sec + ((double)ts_end.tv_nsec / NSEC_DIV));
+		if (verbose)
+			fprintf(stdout,
+				"transaction %u host value = 0x%08x\n",
+				txn + 1, write_value);
 
-	if (verbose)
-		printf("** device %s, latency = %f sec\n", devname, total_time);
+		clock_gettime(CLOCK_MONOTONIC, &ts_start);
+		rc = write_from_buffer(devname, fpga_fd, (char *)msg_data,
+				msg_data_bytes, MAPPED_MSG_DATA_OFFSET);
+		if (rc < 0)
+			goto out;
+
+		rc = write_from_buffer(devname, fpga_fd, (char *)&write_value,
+				sizeof(uint32_t), AXI_GPIO_0_WRITE);
+		if (rc < 0)
+			goto out;
+
+		rc = wait_for_user_interrupt(event_fd);
+		if (rc < 0)
+			goto out;
+
+		write_value = 1;
+		rc = write_from_buffer(devname, fpga_fd, (char *)&write_value,
+				sizeof(uint32_t), AXI_GPIO_1_REARM);
+		if (rc < 0)
+			goto out;
+
+		rc = read_to_buffer(devname, fpga_fd, (char *)&read_value,
+				sizeof(uint32_t), AXI_GPIO_0_BASE);
+		if (rc < 0)
+			goto out;
+
+		rc = clock_gettime(CLOCK_MONOTONIC, &ts_end);
+		if (rc < 0) {
+			perror("clock_gettime");
+			rc = -errno;
+			goto out;
+		}
+
+		if (verbose)
+			printf("transaction %u read back value = 0x%08x\n",
+				txn + 1, read_value);
+
+		timespec_sub(&ts_end, &ts_start);
+		sample_time =
+			(ts_end.tv_sec + ((double)ts_end.tv_nsec / NSEC_DIV));
+		if (txn == 0) {
+			latency_min = sample_time;
+			latency_max = sample_time;
+		} else {
+			if (sample_time < latency_min)
+				latency_min = sample_time;
+			if (sample_time > latency_max)
+				latency_max = sample_time;
+		}
+		{
+			double delta = sample_time - latency_mean;
+
+			latency_mean += delta / (txn + 1);
+			latency_m2 += delta * (sample_time - latency_mean);
+		}
+
+		if (verbose)
+			printf("** device %s, transaction %u latency = %.3f usec\n",
+				devname, txn + 1, sample_time * 1000000.0);
+
+		//  usleep(1000);
+	}
+
+	if (transaction_count > 1)
+		latency_stddev = sqrt(latency_m2 / transaction_count);
+
+	latency_jitter = latency_max - latency_min;
+
+	fprintf(stdout, "iterations = %u\n", transaction_count);
+	fprintf(stdout, "latency min = %.3f usec\n",
+		latency_min * 1000000.0);
+	fprintf(stdout, "latency max = %.3f usec\n",
+		latency_max * 1000000.0);
+	fprintf(stdout, "latency mean = %.3f usec\n",
+		latency_mean * 1000000.0);
+	fprintf(stdout, "latency stddev = %.3f usec\n",
+		latency_stddev * 1000000.0);
+	fprintf(stdout, "latency jitter (pk-pk) = %.3f usec\n",
+		latency_jitter * 1000000.0);
 
 	rc = 0;
 
