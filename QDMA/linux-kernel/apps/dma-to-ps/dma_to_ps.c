@@ -228,7 +228,9 @@ static int test_dma(char *devname, uint32_t payload_size,
 	struct dma_message *msg_data = NULL;
 	size_t msg_data_bytes = 0;
 	unsigned int i;
-	uint32_t txn;
+	uint64_t txn;
+	uint64_t total_iterations = (uint64_t)transaction_count + 1;
+	uint64_t stats_count = 0;
 	struct timespec ts_start, ts_end;
 	int fpga_fd = open(devname, O_RDWR);
 	int intr_fd = -1;
@@ -287,7 +289,7 @@ static int test_dma(char *devname, uint32_t payload_size,
 	 * cdev path into a qdma_request_submit() call.
 	 * This single 32-bit write is intended to trigger a PS-side interrupt.
 	 */
-	for (txn = 0; txn < transaction_count; txn++) {
+	for (txn = 0; txn < total_iterations; txn++) {
 		rc = read_to_buffer(devname, fpga_fd, (char *)&read_value,
 			sizeof(uint32_t), AXI_GPIO_0_BASE);
 		if (rc < 0)
@@ -297,8 +299,8 @@ static int test_dma(char *devname, uint32_t payload_size,
 
 		if (verbose)
 			fprintf(stdout,
-				"transaction %u host value = 0x%08x\n",
-				txn + 1, write_value);
+				"transaction %llu host value = 0x%08x\n",
+				(unsigned long long)(txn + 1), write_value);
 
 		clock_gettime(CLOCK_MONOTONIC, &ts_start);
 		rc = write_from_buffer(devname, fpga_fd, (char *)msg_data,
@@ -334,37 +336,45 @@ static int test_dma(char *devname, uint32_t payload_size,
 		}
 
 		if (verbose)
-			printf("transaction %u read back value = 0x%08x\n",
-				txn + 1, read_value);
+			printf("transaction %llu read back value = 0x%08x\n",
+				(unsigned long long)(txn + 1), read_value);
 
 		timespec_sub(&ts_end, &ts_start);
 		sample_time =
 			(ts_end.tv_sec + ((double)ts_end.tv_nsec / NSEC_DIV));
 		if (txn == 0) {
-			latency_min = sample_time;
-			latency_max = sample_time;
+			if (verbose)
+				printf("** device %s, warm-up latency = %.3f usec (discarded)\n",
+					devname, sample_time * 1000000.0);
 		} else {
-			if (sample_time < latency_min)
+			stats_count++;
+			if (stats_count == 1) {
 				latency_min = sample_time;
-			if (sample_time > latency_max)
 				latency_max = sample_time;
-		}
-		{
-			double delta = sample_time - latency_mean;
+			} else {
+				if (sample_time < latency_min)
+					latency_min = sample_time;
+				if (sample_time > latency_max)
+					latency_max = sample_time;
+			}
+			{
+				double delta = sample_time - latency_mean;
 
-			latency_mean += delta / (txn + 1);
-			latency_m2 += delta * (sample_time - latency_mean);
-		}
+				latency_mean += delta / (double)stats_count;
+				latency_m2 += delta * (sample_time - latency_mean);
+			}
 
-		if (verbose)
-			printf("** device %s, transaction %u latency = %.3f usec\n",
-				devname, txn + 1, sample_time * 1000000.0);
+			if (verbose)
+				printf("** device %s, transaction %llu latency = %.3f usec\n",
+					devname, (unsigned long long)stats_count,
+					sample_time * 1000000.0);
+		}
 
 		//  usleep(1000);
 	}
 
-	if (transaction_count > 1)
-		latency_stddev = sqrt(latency_m2 / transaction_count);
+	if (stats_count > 1)
+		latency_stddev = sqrt(latency_m2 / (double)stats_count);
 
 	latency_jitter = latency_max - latency_min;
 
