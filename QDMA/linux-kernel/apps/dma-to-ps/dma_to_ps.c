@@ -43,7 +43,6 @@
 #define AXI_GPIO_1_BASE 0x20200010000ULL
 #define AXI_GPIO_1_REARM (AXI_GPIO_1_BASE + 0x120)
 #define MAPPED_MSG_DATA_OFFSET 0x70100000ULL
-#define MAPPED_MSG_DATA_LEN 10
 
 #define USER_INTR_DEV_PATH "/dev/qdma_user_intr"
 #define USER_INTR_WAIT_TIMEOUT_MS 2000
@@ -51,15 +50,19 @@
 #define QDMA_USER_INTR_IOCTL_SET_EVENTFD _IOW(QDMA_USER_INTR_IOCTL_MAGIC, 1, int)
 
 static struct option const long_opts[] = {
-	{"device", required_argument, NULL, 'd'},
 	{"function", required_argument, NULL, 'u'},
-	{"write-value", required_argument, NULL, 'w'},
+	{"payload-size", required_argument, NULL, 'p'},
 	{"help", no_argument, NULL, 'h'},
 	{"verbose", no_argument, NULL, 'v'},
 	{0, 0, 0, 0}
 };
 
-static int test_dma(char *devname, uint8_t write_seed);
+struct dma_message {
+	uint32_t size;
+	uint8_t payload[];
+};
+
+static int test_dma(char *devname, uint32_t payload_size);
 
 static int wait_for_user_interrupt(int event_fd)
 {
@@ -125,22 +128,18 @@ out:
 
 static void usage(const char *name)
 {
-	int i = 0;
-
 	fprintf(stdout, "%s\n\n", name);
 	fprintf(stdout, "usage: %s [OPTIONS]\n\n", name);
 	fprintf(stdout,
-		"Write one 32-bit MM value to a fixed AXI address to trigger an interrupt using the QDMA request-submit path.\n\n");
+		"Write a DMA message to a fixed MM address and then trigger a PS interrupt using the QDMA request-submit path.\n\n");
 
 	fprintf(stdout,
-		"  -%c (--%s) function number used to build /dev/qdma<func>-MM-0 (default 0x%x)\n",
-		long_opts[i].val, long_opts[i].name, FUNCTION_DEFAULT);
-	i++;
-	fprintf(stdout, "  -%c (--%s) print usage help and exit\n",
-		long_opts[i].val, long_opts[i].name);
-	i++;
-	fprintf(stdout, "  -%c (--%s) verbose output\n",
-		long_opts[i].val, long_opts[i].name);
+		"  -u (--function) function number used to build /dev/qdma<func>-MM-0 (default 0x%x)\n",
+		FUNCTION_DEFAULT);
+	fprintf(stdout,
+		"  -p (--payload-size) payload size in bytes for dma_message payload (required)\n");
+	fprintf(stdout, "  -h (--help) print usage help and exit\n");
+	fprintf(stdout, "  -v (--verbose) verbose output\n");
 }
 
 int main(int argc, char *argv[])
@@ -148,10 +147,11 @@ int main(int argc, char *argv[])
 	int cmd_opt;
 	char device_name[DEVICE_NAME_MAX];
 	uint64_t function = FUNCTION_DEFAULT;
-	uint32_t write_value_arg = 1;
+	uint64_t payload_size_arg = 0;
+	int payload_size_set = 0;
 
 	while ((cmd_opt =
-		getopt_long(argc, argv, "vhu:w:", long_opts,
+		getopt_long(argc, argv, "vhp:u:", long_opts,
 			    NULL)) != -1) {
 		switch (cmd_opt) {
 		case 0:
@@ -161,12 +161,13 @@ int main(int argc, char *argv[])
 			/* Function number (e.g. 0x41000) */
 			function = getopt_integer(optarg);
 			break;
-		case 'w':
-			/* First byte value for mapped message write (0-255) */
-			write_value_arg = getopt_integer(optarg);
-			if (write_value_arg > 0xFF) {
+		case 'p':
+			payload_size_arg = getopt_integer(optarg);
+			payload_size_set = 1;
+			if (payload_size_arg > UINT32_MAX) {
 				fprintf(stderr,
-					"--write-value must be in range 0-255\n");
+					"--payload-size must be in range 0-%u\n",
+					UINT32_MAX);
 				exit(-EINVAL);
 			}
 			break;
@@ -181,32 +182,38 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (!payload_size_set) {
+		fprintf(stderr, "--payload-size is required\n");
+		usage(argv[0]);
+		exit(-EINVAL);
+	}
+
 	snprintf(device_name, sizeof(device_name), "/dev/qdma%05lx-MM-0",
 		 (unsigned long)function);
 
 	if (verbose)
 		fprintf(stdout,
-		"dev %s, func 0x%lx, static_addr 0x%llx, write_seed 0x%02x\n",
+		"dev %s, func 0x%lx, static_addr 0x%llx, payload_size %llu\n",
 		device_name, function,
 		(unsigned long long)AXI_GPIO_0_WRITE,
-		(unsigned int)write_value_arg);
+		(unsigned long long)payload_size_arg);
 
-	return test_dma(device_name, (uint8_t)write_value_arg);
+	return test_dma(device_name, (uint32_t)payload_size_arg);
 }
 
-static int test_dma(char *devname, uint8_t write_seed)
+static int test_dma(char *devname, uint32_t payload_size)
 {
 	ssize_t rc;
 	uint32_t write_value = 0;
 	uint32_t read_value = 0;
-	uint8_t msg_data[MAPPED_MSG_DATA_LEN];
+	struct dma_message *msg_data = NULL;
+	size_t msg_data_bytes = 0;
 	unsigned int i;
 	struct timespec ts_start, ts_end;
 	int fpga_fd = open(devname, O_RDWR);
 	int intr_fd = -1;
 	int event_fd = -1;
 	double total_time = 0;
-
 
 	if (fpga_fd < 0) {
 		fprintf(stderr, "unable to open device %s, %d.\n",
@@ -247,8 +254,17 @@ static int test_dma(char *devname, uint8_t write_seed)
 	if (verbose)
 		fprintf(stdout, "host value = 0x%08x\n", write_value);
 
-	for (i = 0; i < MAPPED_MSG_DATA_LEN; i++)
-		msg_data[i] = (uint8_t)(write_seed + i);
+	msg_data_bytes = sizeof(*msg_data) + payload_size;
+	msg_data = malloc(msg_data_bytes);
+	if (!msg_data) {
+		perror("malloc dma_message");
+		rc = -ENOMEM;
+		goto out;
+	}
+
+	msg_data->size = payload_size;
+	for (i = 0; i < payload_size; i++)
+		msg_data->payload[i] = 0xAA;
 
 	/*
 	 * Userspace write on /dev/qdma*-MM-* is converted by the kernel
@@ -257,7 +273,7 @@ static int test_dma(char *devname, uint8_t write_seed)
 	 */
 	clock_gettime(CLOCK_MONOTONIC, &ts_start);
 	rc = write_from_buffer(devname, fpga_fd, (char *)msg_data,
-			MAPPED_MSG_DATA_LEN, MAPPED_MSG_DATA_OFFSET);
+			msg_data_bytes, MAPPED_MSG_DATA_OFFSET);
 	if (rc < 0)
 		goto out;
 
@@ -294,6 +310,7 @@ static int test_dma(char *devname, uint8_t write_seed)
 	rc = 0;
 
 out:
+	free(msg_data);
 	if (event_fd >= 0)
 		close(event_fd);
 	if (intr_fd >= 0)
