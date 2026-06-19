@@ -42,7 +42,9 @@
 #define AXI_GPIO_0_WRITE (AXI_GPIO_0_BASE + 0x8)
 
 #define AXI_GPIO_1_BASE 0x20200010000ULL
+#define AXI_GPIO_1_GIER (AXI_GPIO_1_BASE + 0x11c)
 #define AXI_GPIO_1_REARM (AXI_GPIO_1_BASE + 0x120)
+#define AXI_GPIO_1_IP_IER (AXI_GPIO_1_BASE + 0x128)
 #define MAPPED_MSG_DATA_OFFSET 0x70100000ULL
 
 #define USER_INTR_DEV_PATH "/dev/qdma_user_intr"
@@ -284,6 +286,19 @@ static int test_dma(char *devname, uint32_t payload_size,
 	for (i = 0; i < payload_size; i++)
 		msg_data->payload[i] = 0xAA;
 
+	/* Enable the interrupts back to the host for completed transactions */
+	write_value = 0x80000000;
+	rc = write_from_buffer(devname, fpga_fd, (char *)&write_value,
+			sizeof(uint32_t), AXI_GPIO_1_GIER);
+	if (rc < 0)
+		goto out;
+
+	write_value = 0x1;
+	rc = write_from_buffer(devname, fpga_fd, (char *)&write_value,
+			sizeof(uint32_t), AXI_GPIO_1_IP_IER);
+	if (rc < 0)
+		goto out;
+
 	/*
 	 * Userspace write on /dev/qdma*-MM-* is converted by the kernel
 	 * cdev path into a qdma_request_submit() call.
@@ -303,6 +318,7 @@ static int test_dma(char *devname, uint32_t payload_size,
 				(unsigned long long)(txn + 1), write_value);
 
 		clock_gettime(CLOCK_MONOTONIC, &ts_start);
+
 		rc = write_from_buffer(devname, fpga_fd, (char *)msg_data,
 				msg_data_bytes, MAPPED_MSG_DATA_OFFSET);
 		if (rc < 0)
@@ -369,8 +385,6 @@ static int test_dma(char *devname, uint32_t payload_size,
 					devname, (unsigned long long)stats_count,
 					sample_time * 1000000.0);
 		}
-
-		//  usleep(1000);
 	}
 
 	if (stats_count > 1)
