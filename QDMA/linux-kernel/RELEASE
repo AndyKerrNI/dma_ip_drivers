@@ -1,3 +1,12 @@
+RELEASE: 2025.2.0
+=================
+
+This release is validated
+        - On VCU118 for QDMA5.0 2025.2 example design
+        - On XCVP1202 for CPM5 2025.2 example design
+        - On XCVC1902 for CPM4 2025.2 example design
+	- Support for CPM5 MM performance with dual NoC channels 
+
 RELEASE: 2024.1.0
 =================
 
@@ -165,8 +174,13 @@ CPM5
 ----------------
 - Added support for kernel version 6.4.x.
 - Added support for Fedora40 & Centos-Stream9 distros.
-- Added support for AlmaLinux 9.4
 - Reduced descriptor data transfer length to 32KB for EQDMA Soft 5.0 design.
+- Fixed bugs in driver.
+
+2025.2.0 Updates
+---------------
+- Added support for kernel version 6.17.x.
+- Added support for Fedora43 , Centos-Stream10, RHEL9.4 & AlmaLinux10 distros.
 - Fixed bugs in driver.
 
 KNOWN ISSUES:
@@ -208,7 +222,7 @@ DRIVER LIMITATIONS:
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
