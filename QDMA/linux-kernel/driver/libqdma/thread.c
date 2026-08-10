@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -38,8 +38,11 @@ int qdma_kthread_dump(struct qdma_kthread *thp, char *buf, int buflen,
 	len += snprintf(buf, buflen, "%s, cpu %u, work %u.\n",
 			thp->name, thp->cpu, thp->work_cnt);
 
-	if (detail)
-		;
+	if (detail) {
+		pr_debug_thread("%s, detail: %d\n",
+				thp->name, detail);
+	}
+
 
 	unlock_thread(thp);
 

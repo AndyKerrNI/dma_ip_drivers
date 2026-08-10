@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -43,6 +43,16 @@
 #define QDMA_DEV QDMA_DEV_VF
 #else
 #define QDMA_DEV QDMA_DEV_PF
+#endif
+
+#ifdef RHEL_RELEASE_VERSION
+#if (RHEL_RELEASE_VERSION(10, 2) <= RHEL_RELEASE_CODE)
+#define QDMA_CHECK_TIMER_API 1
+#else
+#define QDMA_CHECK_TIMER_API 0
+#endif
+#else
+#define QDMA_CHECK_TIMER_API 0
 #endif
 
 static int mbox_hw_send(struct qdma_mbox *mbox, struct mbox_msg *m)
@@ -308,7 +318,7 @@ static int mbox_rcv_one_msg(struct qdma_mbox *mbox)
 
 static inline void mbox_timer_stop(struct qdma_mbox *mbox)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 15, 0)
+#if KERNEL_VERSION(6, 15, 0) > LINUX_VERSION_CODE
 	del_timer(&mbox->timer);
 #else
 	timer_delete(&mbox->timer);
@@ -436,7 +446,8 @@ static void mbox_timer_handler(struct timer_list *t)
 static void mbox_timer_handler(unsigned long arg)
 #endif
 {
-#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 16, 0)
+#if (KERNEL_VERSION(6, 16, 0) <= LINUX_VERSION_CODE) || \
+	QDMA_CHECK_TIMER_API
 	struct qdma_mbox *mbox = timer_container_of(mbox, t, timer);
 #elif KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
 	struct qdma_mbox *mbox = from_timer(mbox, t, timer);

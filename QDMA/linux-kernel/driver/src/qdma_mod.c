@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -798,7 +798,8 @@ static ssize_t set_qmax(struct device *dev,
 
 static DEVICE_ATTR(qmax, S_IWUSR | S_IRUGO, show_qmax, set_qmax);
 static DEVICE_ATTR(intr_rngsz, S_IWUSR | S_IRUGO,
-			show_intr_rngsz, set_intr_rngsz);
+		show_intr_rngsz, set_intr_rngsz);
+
 #ifndef __QDMA_VF__
 static DEVICE_ATTR(buf_sz, S_IWUSR | S_IRUGO,
 		show_c2h_buf_sz, set_c2h_buf_sz);

@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -83,7 +83,7 @@ static int make_sw_context(struct qdma_descq *descq,
 	sw_ctxt->bypass = descq->conf.desc_bypass;
 	sw_ctxt->wbk_en = descq->conf.wb_status_en;
 	sw_ctxt->irq_en = descq->conf.irq_en;
-	sw_ctxt->is_mm = ~descq->conf.st;
+	sw_ctxt->is_mm = ((descq->conf.st) ? 0 : 1);
 	sw_ctxt->qen = 1;
 
 	if (descq->conf.desc_bypass &&
@@ -94,7 +94,7 @@ static int make_sw_context(struct qdma_descq *descq,
 		if (!descq->conf.st) { /* mm h2c/c2h */
 			sw_ctxt->desc_sz = DESC_SZ_32B;
 			sw_ctxt->mm_chn = descq->channel;
-			sw_ctxt->host_id = descq->channel;
+			sw_ctxt->host_id = descq->host_id;
 		} else if (descq->conf.q_type == Q_C2H) {  /* st c2h */
 			sw_ctxt->frcd_en = descq->conf.fetch_credit;
 			sw_ctxt->desc_sz = DESC_SZ_8B;
@@ -315,10 +315,11 @@ int qdma_intr_context_read(struct xlnx_dma_dev *xdev,
 int qdma_descq_context_clear(struct xlnx_dma_dev *xdev, unsigned int qid_hw,
 				bool st, u8 type, bool clr)
 {
-	struct mbox_msg *m = qdma_mbox_msg_alloc();
+	struct mbox_msg *m;
 	int rv;
 	enum mbox_cmpt_ctxt_type cmpt_ctxt_type = QDMA_MBOX_CMPT_CTXT_NONE;
 
+	m = qdma_mbox_msg_alloc();
 	if (!m)
 		return -ENOMEM;
 
@@ -361,10 +362,11 @@ err_out:
 int qdma_descq_context_read(struct xlnx_dma_dev *xdev, unsigned int qid_hw,
 			bool st, u8 type, struct qdma_descq_context *context)
 {
-	struct mbox_msg *m = qdma_mbox_msg_alloc();
+	struct mbox_msg *m = NULL;
 	int rv;
 	enum mbox_cmpt_ctxt_type cmpt_ctxt_type = QDMA_MBOX_CMPT_CTXT_NONE;
 
+	m = qdma_mbox_msg_alloc();
 	if (!m)
 		return -ENOMEM;
 
@@ -402,11 +404,12 @@ err_out:
 int qdma_descq_context_setup(struct qdma_descq *descq)
 {
 	struct xlnx_dma_dev *xdev = descq->xdev;
-	struct mbox_msg *m = qdma_mbox_msg_alloc();
+	struct mbox_msg *m = NULL;
 	struct mbox_descq_conf descq_conf;
 	int rv;
 	enum mbox_cmpt_ctxt_type cmpt_ctxt_type = QDMA_MBOX_CMPT_CTXT_NONE;
 
+	m = qdma_mbox_msg_alloc();
 	if (!m)
 		return -ENOMEM;
 

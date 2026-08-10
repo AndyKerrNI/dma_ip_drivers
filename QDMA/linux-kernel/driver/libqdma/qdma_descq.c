@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -304,12 +304,12 @@ static ssize_t descq_mm_proc_request(struct qdma_descq *descq)
 			unsigned int pg_off = sg->offset;
 
 			if (descq->xdev->version_info.ip_type ==
-					EQDMA_SOFT_IP) {
+				EQDMA_SOFT_IP) {
 				if (ip_version == EQDMA_IP_VERSION_5) {
 					if (qconf->aperture_size >=
-							SOFT_EQDMA_DESC_BLEN_MAX &&
-							sg->len >=
-							SOFT_EQDMA_DESC_MAX_LEN) {
+						SOFT_EQDMA_DESC_BLEN_MAX &&
+						sg->len >=
+						SOFT_EQDMA_DESC_MAX_LEN) {
 						pr_debug("EQDMA Soft IP 5.0 supports descriptor data transfer length < 64K.\n");
 						descq->proc_req_running = 0;
 						unlock_descq(descq);
@@ -1278,8 +1278,10 @@ void qdma_descq_config(struct qdma_descq *descq, struct qdma_queue_conf *qconf,
 		descq->conf.fetch_credit = qconf->fetch_credit;
 		descq->conf.cmpl_cnt_th_idx = qconf->cmpl_cnt_th_idx;
 		/* Below check is applicable only for Versal family. */
-		if (descq->xdev->version_info.ip_type == QDMA_VERSAL_HARD_IP)
+		if (descq->xdev->version_info.ip_type == QDMA_VERSAL_HARD_IP) {
 			descq->channel = qconf->mm_channel;
+			descq->host_id = qconf->mm_hostid;
+		}
 
 		descq->conf.desc_bypass = qconf->desc_bypass;
 		descq->conf.pfetch_bypass = qconf->pfetch_bypass;

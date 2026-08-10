@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -42,6 +42,10 @@
 
 #include "qdma_mod.h"
 #include "libqdma/xdev.h"
+
+#ifdef USER_EXTRA_SUPPORTED
+#include "../user_extra/user_extra.h"
+#endif
 
 /*
  * @struct - xlnx_phy_dev
@@ -169,21 +173,31 @@ static int cdev_gen_open(struct inode *inode, struct file *file)
 {
 	struct qdma_cdev *xcdev = container_of(inode->i_cdev, struct qdma_cdev,
 						cdev);
+	int rv = 0;
+
 	file->private_data = xcdev;
-
-	if (xcdev->fp_open_extra)
-		return xcdev->fp_open_extra(xcdev);
-
+	if (xcdev->fp_open_extra) {
+		rv = xcdev->fp_open_extra(xcdev);
+		if (rv < 0) {
+			pr_err("Extra open callback failed: %d\n", rv);
+			return rv;
+		}
+	}
 	return 0;
 }
 
 static int cdev_gen_close(struct inode *inode, struct file *file)
 {
 	struct qdma_cdev *xcdev = (struct qdma_cdev *)file->private_data;
+	int rv = 0;
 
-	if (xcdev && xcdev->fp_close_extra)
-		return xcdev->fp_close_extra(xcdev);
-
+	if (xcdev && xcdev->fp_close_extra) {
+		rv = xcdev->fp_close_extra(xcdev);
+		if (rv < 0) {
+			pr_warn("Extra close callback failed: %d\n", rv);
+			return rv;
+		}
+	}
 	return 0;
 }
 
@@ -219,6 +233,7 @@ static long cdev_gen_ioctl(struct file *file, unsigned int cmd,
 			unsigned long arg)
 {
 	struct qdma_cdev *xcdev = (struct qdma_cdev *)file->private_data;
+	int rv = 0;
 
 	switch (cmd) {
 	case QDMA_CDEV_IOCTL_NO_MEMCPY:
@@ -227,9 +242,12 @@ static long cdev_gen_ioctl(struct file *file, unsigned int cmd,
 	default:
 		break;
 	}
-	if (xcdev->fp_ioctl_extra)
-		return xcdev->fp_ioctl_extra(xcdev, cmd, arg);
-
+	if (xcdev->fp_ioctl_extra) {
+		rv = xcdev->fp_ioctl_extra(xcdev, cmd, arg);
+		if (rv < 0)
+			pr_warn("Extra ioctl callback failed: %d\n", rv);
+		return rv;
+	}
 	pr_err("%s ioctl NOT supported.\n", xcdev->name);
 	return -EINVAL;
 }
@@ -728,7 +746,9 @@ int qdma_cdev_create(struct qdma_cdev_cb *xcb, struct pci_dev *pdev,
 
 	xcdev->fp_rw = qdma_request_submit;
 	xcdev->fp_aiorw = qdma_batch_request_submit;
-
+#ifdef USER_EXTRA_SUPPORTED
+	user_extra_cdev_register_cb(xcdev);
+#endif
 	*xcdev_pp = xcdev;
 	return 0;
 

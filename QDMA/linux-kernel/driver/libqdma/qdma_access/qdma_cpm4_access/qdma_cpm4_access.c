@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -3023,6 +3023,9 @@ static int qdma_cpm4_cmpt_context_write(void *dev_hndl, uint16_t hw_qid,
 	uint16_t num_words_count = 0;
 	uint32_t baddr_l, baddr_h, baddr_m, pidx_l, pidx_h;
 	enum ind_ctxt_cmd_sel sel = QDMA_CTXT_SEL_CMPT;
+	uint32_t ringsz = ctxt->lower_dword.bit.ringsz_idx;
+	uint32_t cntr   = ctxt->lower_dword.bit.counter_idx;
+	uint32_t timer  = ctxt->lower_dword.bit.timer_idx;
 
 	/* Input args check */
 	if (!dev_hndl || !ctxt) {
@@ -3031,14 +3034,11 @@ static int qdma_cpm4_cmpt_context_write(void *dev_hndl, uint16_t hw_qid,
 					   -QDMA_ERR_INV_PARAM);
 		return -QDMA_ERR_INV_PARAM;
 	}
-
+	
 	if ((ctxt->higher_dword.bit.desc_sz > QDMA_DESC_SIZE_32B) ||
-		(FIELD_GET(CMPL_CTXT_DATA_W0_QSIZE_IDX_MASK,
-		ctxt->lower_dword.bit.ringsz_idx) >= QDMA_NUM_RING_SIZES) ||
-		(FIELD_GET(CMPL_CTXT_DATA_W0_CNTER_IDX_MASK,
-		ctxt->lower_dword.bit.counter_idx) >= QDMA_NUM_C2H_COUNTERS) ||
-		(FIELD_GET(CMPL_CTXT_DATA_W0_TIMER_IDX_MASK,
-		ctxt->lower_dword.bit.timer_idx) >= QDMA_NUM_C2H_TIMERS) ||
+		(ringsz >= QDMA_NUM_RING_SIZES) ||
+		(cntr   >= QDMA_NUM_C2H_COUNTERS) ||
+		(timer  >= QDMA_NUM_C2H_TIMERS) ||
 		(ctxt->lower_dword.bit.trig_mode >
 		QDMA_CMPT_UPDATE_TRIG_MODE_TMR_CNTR)) {
 		qdma_log_error
