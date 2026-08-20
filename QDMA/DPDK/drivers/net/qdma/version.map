@@ -1,4 +1,4 @@
-DPDK_25 {
+DPDK_24 {
 	global:
 
 	rte_pmd_qdma_set_immediate_data_state;

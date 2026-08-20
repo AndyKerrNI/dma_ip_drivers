@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * BSD LICENSE
  *
@@ -171,6 +171,7 @@ enum mbox_msg_op {
 	MBOX_OP_PF_BYE,
 	/** @MBOX_OP_PF_RESET_VF_BYE: VF reset BYE, response required*/
 	MBOX_OP_PF_RESET_VF_BYE,
+
 	/** @MBOX_OP_HELLO_RESP: response to @MBOX_OP_HELLO */
 	MBOX_OP_HELLO_RESP = 0x81,
 	/** @MBOX_OP_FMAP_RESP: response to @MBOX_OP_FMAP */

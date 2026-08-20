@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2019-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,7 @@
 #include "qdma_access_common.h"
 #include "rte_pmd_qdma.h"
 #include "qdma_devops.h"
+
 
 static int validate_qdma_dev_info(int port_id, uint16_t qid)
 {
@@ -878,7 +879,7 @@ int rte_pmd_qdma_set_c2h_descriptor_prefetch(int port_id, uint32_t qid,
 /**
  * Function Name:	rte_pmd_qdma_set_mm_endpoint_addr
  * Description:		Sets the PCIe endpoint memory offset at which to
- *			perform DMA Operation for the specified queue Operating
+ *			perform DMA operation for the specified queue operating
  *			in memory mapped mode.
  *
  * @param	port_id : Port ID.
