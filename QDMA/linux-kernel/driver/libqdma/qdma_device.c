@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -67,6 +67,7 @@ static int device_set_qrange(struct xlnx_dma_dev *xdev)
 	pr_debug("%s, func id %u/%u, Q 0x%x + 0x%x.\n",
 		xdev->conf.name, xdev->func_id, xdev->func_id_parent,
 		qdev->qbase, qdev->qmax);
+
 	if (!rv)
 		qdev->init_qrange = 1;
 
@@ -243,7 +244,7 @@ int qdma_device_init(struct xlnx_dma_dev *xdev)
 	spin_lock_init(&qdev->lock);
 	xdev->dev_priv = (void *)qdev;
 #ifndef __QDMA_VF__
-	if (xdev->conf.master_pf && xdev->conf.qsets_base == -1) {
+	if (xdev->conf.master_pf) {
 		rv = xdev->hw.qdma_init_ctxt_memory(xdev);
 		if (rv < 0) {
 			pr_err("init ctxt write failed, err %d\n", rv);
@@ -315,6 +316,7 @@ void qdma_device_cleanup(struct xlnx_dma_dev *xdev)
 			qdma_queue_remove((unsigned long int)xdev,
 					  i + qdev->qmax, buf, QDMA_BUF_LEN);
 	}
+
 	kfree(qdev->h2c_descq);
 	kfree(qdev->c2h_descq);
 	kfree(qdev->cmpt_descq);

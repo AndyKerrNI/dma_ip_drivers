@@ -3,7 +3,7 @@
  * to enable the user to execute the QDMA functionality
  *
  * Copyright (c) 2019-2022,  Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026,  Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024,  Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is licensed under BSD-style license (found in the
  * LICENSE file in the root directory of this source tree)
@@ -365,9 +365,6 @@ static void xnl_msg_add_extra_config_attrs(struct xnl_hdr *hdr,
 	if (xcmd->req.qparm.sflags & (1 << QPARM_MM_CHANNEL))
 		xnl_msg_add_int_attr(hdr,  XNL_ATTR_MM_CHANNEL,
 		                     xcmd->req.qparm.mm_channel);
-	if (xcmd->req.qparm.sflags & (1 << QPARM_MM_HOST_ID))
-		xnl_msg_add_int_attr(hdr,  XNL_ATTR_MM_HOST_ID,
-							xcmd->req.qparm.mm_hostid);
 	if (xcmd->req.qparm.sflags & (1 << QPARM_CMPT_TRIG_MODE))
 		xnl_msg_add_int_attr(hdr,  XNL_ATTR_CMPT_TRIG_MODE,
 		                     xcmd->req.qparm.cmpt_trig_mode);

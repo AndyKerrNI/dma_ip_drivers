@@ -2,9 +2,9 @@
  * This file is part of the QDMA userspace application
  * to enable the user to execute the QDMA functionality
  *
- * Copyright (c) 2019 - 2022,  Xilinx, Inc.
+ * Copyright (c) 2019 - 2020,  Xilinx, Inc.
  * All rights reserved.
- * Copyright (c) 2022-2026,  Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024,  Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is licensed under BSD-style license (found in the
  * LICENSE file in the root directory of this source tree)
@@ -100,8 +100,6 @@ enum qdma_q_parm_type {
 	QPARM_KEYHOLE_EN,
 	/** @QPARM_MM_CHANNEL: q mm channel enable param */
 	QPARM_MM_CHANNEL,
-	/*** @QPARM_MM_HOST_ID: q mm host id */
-	QPARM_MM_HOST_ID,
 	/** @QPARM_MAX: max q param */
 	QPARM_MAX,
 };
@@ -139,8 +137,6 @@ struct xcmd_q_parm {
 	unsigned char cmpt_trig_mode;
 	/** @mm_channel: mm channel enable */
 	unsigned char mm_channel;
-	/** @mm_hostid: mm host id */
-	unsigned char mm_hostid;
 	/** @fetch_credit: fetch credit enable */
 	unsigned char fetch_credit;
 	/** @is_qp: queue pair */

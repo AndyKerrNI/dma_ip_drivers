@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -143,7 +143,6 @@ enum xnl_attr_t {
 	XNL_ATTR_CMPT_CNTR_IDX,		/**< completion counter index */
 	XNL_ATTR_CMPT_TRIG_MODE,	/**< completion trigger mode */
 	XNL_ATTR_MM_CHANNEL,		/**< mm channel */
-	XNL_ATTR_MM_HOST_ID,            /**< mm host id */
 	XNL_ATTR_CMPT_ENTRIES_CNT,      /**< completion entries count */
 
 	XNL_ATTR_RANGE_START,		/**< range start */
@@ -257,9 +256,6 @@ static const char *xnl_attr_str[XNL_ATTR_MAX + 1] = {
 	"CMPT_TIMER_IDX",		/**< XNL_ATTR_CMPT_TIMER_IDX */
 	"CMPT_CNTR_IDX",		/**< XNL_ATTR_CMPT_CNTR_IDX */
 	"CMPT_TRIG_MODE",		/**< XNL_ATTR_CMPT_TRIG_MODE */
-	"MM_CHANNEL",			/**< XNL_ATTR_MM_CHANNEL */
-	"MM_HOST_ID",			/**< XNL_ATTR_MM_HOST_ID */
-	"CMPT_ENTRIES_CNT",		/**< XNL_ATTR_CMPT_ENTRIES_CNT */
 	"RANGE_START",			/**< XNL_ATTR_RANGE_START */
 	"RANGE_END",			/**< XNL_ATTR_RANGE_END */
 	"INTR_VECTOR_IDX",		/**< XNL_ATTR_INTR_VECTOR_IDX */
@@ -275,20 +271,12 @@ static const char *xnl_attr_str[XNL_ATTR_MAX + 1] = {
 	"Q_STATE",			/**< XNL_ATTR_Q_STATE*/
 	"ERROR",			/**< XNL_ATTR_ERROR */
 	"PING_PONG_EN",		/**< XNL_PING_PONG_EN */
-	"APERTURE_SZ",			/**< XNL_ATTR_APERTURE_SZ */
-	"DEV_STAT_PING_PONG_LATMIN1", /**< XNL_ATTR_DEV_STAT_PING_PONG_LATMIN1 */
-	"DEV_STAT_PING_PONG_LATMIN2", /**< XNL_ATTR_DEV_STAT_PING_PONG_LATMIN2 */
-	"DEV_STAT_PING_PONG_LATMAX1", /**< XNL_ATTR_DEV_STAT_PING_PONG_LATMAX1 */
-	"DEV_STAT_PING_PONG_LATMAX2", /**< XNL_ATTR_DEV_STAT_PING_PONG_LATMAX2 */
-	"DEV_STAT_PING_PONG_LATAVG1", /**< XNL_ATTR_DEV_STAT_PING_PONG_LATAVG1 */
-	"DEV_STAT_PING_PONG_LATAVG2", /**< XNL_ATTR_DEV_STAT_PING_PONG_LATAVG2 */
 	"DEV_ATTR",			/**< XNL_ATTR_DEV */
 	"XNL_ATTR_DEBUG_EN",	/** XNL_ATTR_DEBUG_EN */
 	"XNL_ATTR_DESC_ENGINE_MODE",	/** XNL_ATTR_DESC_ENGINE_MODE */
 #ifdef ERR_DEBUG
 	"QPARAM_ERR_INFO",		/**< queue param info */
 #endif
-	"NUM_REGS",			/**< XNL_ATTR_NUM_REGS */
 	"ATTR_MAX",
 
 };

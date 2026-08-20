@@ -2,7 +2,7 @@
 # * This file is part of the Xilinx DMA IP Core driver for Linux
 # *
 # * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
-# * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+# * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
 # *
 # * This source code is free software; you can redistribute it and/or modify it
 # * under the terms and conditions of the GNU General Public License,
@@ -44,16 +44,15 @@ $(info ARCH = $(ARCH).)
 
 MOD_NAME := qdma$(PFVF_TYPE)
 
-ccflags-y += -DLINUX -D__KERNEL__ -DMODULE -O2 -pipe -Wall -Werror
-ccflags-y += $(FLAGS) $(CPPFLAGS) $(EXTRA_FLAGS)
-ccflags-y += -I$(srcdir)/../include
-ccflags-y += -I$(srcdir)/../libqdma
-ccflags-y += -I$(srcdir)/../libqdma/qdma_access
-ccflags-y += -I$(srcdir)/../libqdma/qdma_access/qdma_soft_access
-ccflags-y += -I$(srcdir)/../libqdma/qdma_access/eqdma_soft_access
-ccflags-y += -I$(srcdir)/../libqdma/qdma_access/eqdma_cpm5_access
-ccflags-y += -I$(srcdir)/../libqdma/qdma_access/qdma_cpm4_access
-ccflags-y += -I.
+EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -DMODULE -O2 -pipe -Wall -Werror
+EXTRA_CFLAGS += $(FLAGS) $(CPPFLAGS) $(EXTRA_FLAGS)
+EXTRA_CFLAGS += -I$(srcdir)/../include
+EXTRA_CFLAGS += -I$(KSRC)/../include
+EXTRA_CFLAGS += -I$(srcdir)/../libqdma/qdma_access/qdma_soft_access
+EXTRA_CFLAGS += -I$(srcdir)/../libqdma/qdma_access/eqdma_soft_access
+EXTRA_CFLAGS += -I$(srcdir)/../libqdma/qdma_access/eqdma_cpm5_access
+EXTRA_CFLAGS += -I$(srcdir)/../libqdma/qdma_access/qdma_cpm4_access
+EXTRA_CFLAGS += -I.
 
 # linux >= 3.13 genl_ops become part of the genl_family. And although
 # genl_register_family_with_ops() is still retained until kernel 4.10,
@@ -83,7 +82,7 @@ endif
 
 $(info EXTRA_FLAGS = $(EXTRA_FLAGS).)
 $(info ccflags-y = $(ccflags-y).)
-#ccflags-y += -DDEBUG
+#EXTRA_CFLAGS += -DDEBUG
 
 #For Kernel Images > 4.9.199 with CONFIG_STACK_VALIDATION=y and GCC version > 8 compiler throws spurious warnings
 #related to sibling calls and frame pointer save/setup. To supress these warnings
@@ -101,9 +100,6 @@ else
 endif
 
 DRV_OBJS := nl.o cdev.o qdma_mod.o
-ifeq ($(USER_EXTRA_SUPPORTED), 1)
-DRV_OBJS += ../user_extra/user_extra.o
-endif
 
 LIBQDMA_OBJS := libqdma/qdma_mbox.o libqdma/qdma_intr.o libqdma/qdma_st_c2h.o \
 	libqdma/qdma_thread.o libqdma/libqdma_export.o libqdma/qdma_context.o \

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -532,7 +532,7 @@ static int mbox_compose_sw_context(void *dev_hndl,
 	sw_ctxt->bypass = qctxt->descq_conf.en_bypass;
 	sw_ctxt->wbk_en = qctxt->descq_conf.wbk_en;
 	sw_ctxt->irq_en = qctxt->descq_conf.irq_en;
-	sw_ctxt->is_mm = ((qctxt->st) ? 0 : 1);
+	sw_ctxt->is_mm = ~qctxt->st;
 	sw_ctxt->mm_chn = 0;
 	sw_ctxt->qen = 1;
 	sw_ctxt->frcd_en = qctxt->descq_conf.forced_en;

@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -857,7 +857,7 @@ int dbgfs_queue_init(struct qdma_queue_conf *conf,
 		return -EINVAL;
 	snprintf(qname, 16, "%u", conf->qidx);
 
-	mutex_lock(&descq->xdev->qidx_lock);
+	spin_lock(&descq->xdev->qidx_lock);
 	/** create queue root only if it is not created */
 	if (pairq->dbgfs_qidx_root) {
 		dbgfs_qidx_root = pairq->dbgfs_qidx_root;
@@ -868,7 +868,7 @@ int dbgfs_queue_init(struct qdma_queue_conf *conf,
 		if (!dbgfs_qidx_root) {
 			pr_err("Failed to create queue [%s] directory\n",
 					qname);
-			mutex_unlock(&descq->xdev->qidx_lock);
+			spin_unlock(&descq->xdev->qidx_lock);
 			return -1;
 		}
 	}
@@ -921,18 +921,18 @@ int dbgfs_queue_init(struct qdma_queue_conf *conf,
 	descq->dbgfs_qidx_root = dbgfs_qidx_root;
 	descq->dbgfs_queue_root = dbgfs_queue_root;
 	descq->dbgfs_cmpt_queue_root = dbgfs_cmpt_queue_root;
-	mutex_unlock(&descq->xdev->qidx_lock);
+	spin_unlock(&descq->xdev->qidx_lock);
 
 	return 0;
 
 dbgfs_queue_init_fail:
 	if (pairq->dbgfs_qidx_root) {
-		mutex_unlock(&descq->xdev->qidx_lock);
+		spin_unlock(&descq->xdev->qidx_lock);
 		return -1;
 	}
 	pr_err("Failed to init q debug files, removing [%s] dir\n", qname);
 	debugfs_remove_recursive(dbgfs_qidx_root);
-	mutex_unlock(&descq->xdev->qidx_lock);
+	spin_unlock(&descq->xdev->qidx_lock);
 	return -1;
 }
 

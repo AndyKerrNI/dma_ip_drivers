@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -64,7 +64,6 @@ struct qdma_descq {
 	struct xlnx_dma_dev *xdev;
 	/** number of channels */
 	u8 channel;
-	u8 host_id;
 	/** flag to indicate error on the Q, in halted state */
 	u8 err:1;
 	/** color bit for the queue */

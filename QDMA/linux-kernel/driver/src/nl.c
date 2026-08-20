@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -39,7 +39,7 @@
 static int xnl_dev_list(struct sk_buff *skb2, struct genl_info *info);
 
 #ifdef RHEL_RELEASE_VERSION
-#if RHEL_RELEASE_VERSION(10, 99) >= RHEL_RELEASE_CODE
+#if RHEL_RELEASE_VERSION(9, 99) >= RHEL_RELEASE_CODE
 static struct nla_policy xnl_policy[XNL_ATTR_MAX] = {
 	[XNL_ATTR_GENMSG] =		{ .type = NLA_NUL_STRING },
 
@@ -83,7 +83,6 @@ static struct nla_policy xnl_policy[XNL_ATTR_MAX] = {
 	[XNL_ATTR_CMPT_TIMER_IDX] =	{ .type = NLA_U32 },
 	[XNL_ATTR_CMPT_CNTR_IDX] =	{ .type = NLA_U32 },
 	[XNL_ATTR_MM_CHANNEL] =		{ .type = NLA_U32 },
-	[XNL_ATTR_MM_HOST_ID] =		{ .type = NLA_U32 },
 	[XNL_ATTR_CMPT_TRIG_MODE] =	{ .type = NLA_U32 },
 	[XNL_ATTR_CMPT_ENTRIES_CNT] =	{ .type = NLA_U32 },
 	[XNL_ATTR_RANGE_START] =	{ .type = NLA_U32 },
@@ -165,7 +164,6 @@ static struct nla_policy xnl_policy[XNL_ATTR_MAX] = {
 	[XNL_ATTR_CMPT_TIMER_IDX] =	{ .type = NLA_U32 },
 	[XNL_ATTR_CMPT_CNTR_IDX] =	{ .type = NLA_U32 },
 	[XNL_ATTR_MM_CHANNEL] =		{ .type = NLA_U32 },
-	[XNL_ATTR_MM_HOST_ID] =		{ .type = NLA_U32 },
 	[XNL_ATTR_CMPT_TRIG_MODE] =	{ .type = NLA_U32 },
 	[XNL_ATTR_CMPT_ENTRIES_CNT] =	{ .type = NLA_U32 },
 	[XNL_ATTR_RANGE_START] =	{ .type = NLA_U32 },
@@ -239,7 +237,7 @@ static int xnl_err_induce(struct sk_buff *skb2, struct genl_info *info);
 #endif
 
 #ifdef RHEL_RELEASE_VERSION
-#if RHEL_RELEASE_VERSION(10, 99) >= RHEL_RELEASE_CODE
+#if RHEL_RELEASE_VERSION(9, 99) >= RHEL_RELEASE_CODE
 #define GENL_OPS_POLICY
 #endif
 #else
@@ -792,39 +790,10 @@ respond_error:
 	return NULL;
 }
 
-static int xpdev_queue_dir(struct genl_info *info)
-{
-	struct xlnx_pci_dev *xpdev;
-	unsigned int qidx;
-	int dir_flag = 0;
-	struct xlnx_qdata *qdata;
-	unsigned int qmax;
-
-	xpdev = xnl_rcv_check_xpdev(info);
-	if (!xpdev)
-		return -EINVAL;
-	if (!info->attrs[XNL_ATTR_QIDX])
-		return -EINVAL;
-	qidx = nla_get_u32(info->attrs[XNL_ATTR_QIDX]);
-	if (qidx >= xpdev->qmax)
-		return -EINVAL;
-	qmax = xpdev->qmax;
-	qdata = xpdev->qdata + qidx;
-
-	if ((qdata->qhndl >= 0) && (qdata->xcdev))
-		dir_flag |= XNL_F_QDIR_H2C;
-	else if (((qdata+qmax)->qhndl) && ((qdata+qmax)->xcdev))
-		dir_flag |= XNL_F_QDIR_C2H;
-	else
-		return -EINVAL;
-	return dir_flag;
-}
-
 static int qconf_get(struct qdma_queue_conf *qconf, struct genl_info *info,
 			char *err, int errlen, unsigned char *is_qp)
 {
 	u32 f = 0;
-	int dir;
 
 	if (!qconf || !info)
 		return -EINVAL;
@@ -834,16 +803,6 @@ static int qconf_get(struct qdma_queue_conf *qconf, struct genl_info *info,
 		goto respond_error;
 	}
 	f = nla_get_u32(info->attrs[XNL_ATTR_QFLAG]);
-
-	if (f == 0 && info->genlhdr->cmd == XNL_CMD_Q_LIST) {
-		dir = xpdev_queue_dir(info);
-		if (dir < 0) {
-			snprintf(err, errlen,
-				"ERR! No active H2C/C2H queue found.\n");
-			goto respond_error;
-		}
-		f = (u32)dir;
-	}
 	if ((f & XNL_F_QMODE_ST) && (f & XNL_F_QMODE_MM)) {
 		snprintf(err, errlen, "ERR! Both ST and MM mode set.\n");
 		goto respond_error;
@@ -962,9 +921,6 @@ static void xnl_extract_extra_config_attr(struct genl_info *info,
 	if (xnl_chk_attr(XNL_ATTR_MM_CHANNEL, info, qconf->qidx, NULL, 0) == 0)
 		qconf->mm_channel =
 			nla_get_u32(info->attrs[XNL_ATTR_MM_CHANNEL]);
-	if (xnl_chk_attr(XNL_ATTR_MM_HOST_ID, info, qconf->qidx, NULL, 0) == 0)
-		qconf->mm_hostid =
-			nla_get_u32(info->attrs[XNL_ATTR_MM_HOST_ID]);
 	if (xnl_chk_attr(XNL_ATTR_CMPT_DESC_SIZE,
 				info, qconf->qidx, NULL, 0) == 0)
 		qconf->cmpl_desc_sz =
@@ -1561,31 +1517,12 @@ static int xnl_q_list(struct sk_buff *skb2, struct genl_info *info)
 	if (!buf)
 		return -ENOMEM;
 	buflen = XNL_RESP_BUFLEN_MIN;
-	qidx = nla_get_u32(info->attrs[XNL_ATTR_QIDX]);
-	num_q = nla_get_u32(info->attrs[XNL_ATTR_NUM_Q]);
-
-	if (!num_q) {
-		snprintf(buf, XNL_RESP_BUFLEN_MIN, "num_q cannot be 0\n");
-		goto send_rsp;
-	}
 	rv = qconf_get(&qconf, info, ebuf, XNL_RESP_BUFLEN_MIN, &is_qp);
 	if (rv < 0)
 		return rv;
 
 	qidx = qconf.qidx;
-
-	if (qidx >= xpdev->qmax) {
-		rv += snprintf(buf, buflen,
-			"ERR! qidx %u out of range, qmax %u\n",
-			qidx, xpdev->qmax);
-		goto send_rsp;
-	}
-	if (num_q > (xpdev->qmax - qidx)) {
-		rv += snprintf(buf, buflen,
-			"ERR! qidx %u + num_q %u exceeds qmax %u\n",
-			qidx, num_q, xpdev->qmax);
-		goto send_rsp;
-	}
+	num_q = nla_get_u32(info->attrs[XNL_ATTR_NUM_Q]);
 
 	rv = qdma_get_queue_count(xpdev->dev_hndl, &q_count, buf, buflen);
 	if (rv < 0) {
@@ -1603,6 +1540,8 @@ static int xnl_q_list(struct sk_buff *skb2, struct genl_info *info)
 	qdata = xnl_rcv_check_qidx(info, xpdev, &qconf, buf, buflen);
 	if (!qdata)
 		goto send_rsp;
+
+	num_q = nla_get_u32(info->attrs[XNL_ATTR_NUM_Q]);
 
 	if (num_q > QDMA_Q_DUMP_MAX_QUEUES) {
 		pr_err("Can not dump more than %d queues\n",
@@ -1800,8 +1739,6 @@ static int xnl_q_start(struct sk_buff *skb2, struct genl_info *info)
 
 	if (!info->attrs[XNL_ATTR_MM_CHANNEL])
 		qconf.mm_channel = 0;
-	if (!info->attrs[XNL_ATTR_MM_HOST_ID])
-		qconf.mm_hostid = 0;
 
 	dir = qconf.q_type;
 	for (i = qidx; i < (qidx + num_q); i++) {

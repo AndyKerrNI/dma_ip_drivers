@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -312,7 +312,7 @@ struct xlnx_dma_dev {
 	/** debugfs intr ring root */
 	struct dentry *dbgfs_intr_root;
 	/* lock for creating qidx directory */
-	struct mutex qidx_lock;
+	spinlock_t qidx_lock;
 #endif
 
 	/** number of packets processed in pf */

@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -591,10 +591,9 @@ static int qdma_config_read_reg_list(struct xlnx_dma_dev *xdev,
 			uint16_t group_num,
 			uint16_t *num_regs, struct qdma_reg_data *reg_list)
 {
-	struct mbox_msg *m = NULL;
+	struct mbox_msg *m = qdma_mbox_msg_alloc();
 	int rv;
 
-	m = qdma_mbox_msg_alloc();
 	if (!m)
 		return -ENOMEM;
 
@@ -1179,6 +1178,7 @@ int qdma_queue_list(unsigned long dev_hndl, int qidx, int num_q, char *buf,
 		snprintf(buf, buflen, "Invalid dev_hndl passed");
 		return -EINVAL;
 	}
+
 	qdev = xdev_2_qdev(xdev);
 	/** make sure that qdev is not NULL, else return error */
 	if  (!qdev) {
@@ -1382,15 +1382,14 @@ int qdma_queue_add(unsigned long dev_hndl, struct qdma_queue_conf *qconf,
 	unsigned int qcnt;
 	struct qdma_descq *descq;
 	struct qdma_dev *qdev;
-	int rv = 0;
-
 #ifdef DEBUGFS
 	struct qdma_descq *pairq;
 #endif
-
 #ifdef __QDMA_VF__
 	uint32_t h2c_qcnt = 0, c2h_qcnt = 0, cmpt_qcnt = 0;
 #endif
+	int rv = 0;
+
 	/** make sure that input buffer is not empty, else return error */
 	if (!buf || !buflen) {
 		pr_err("invalid argument: buf=%p, buflen=%d", buf, buflen);
@@ -1493,12 +1492,11 @@ int qdma_queue_add(unsigned long dev_hndl, struct qdma_queue_conf *qconf,
 	 *  if qcnt is >= qdev->qmax, return error as
 	 *  no free queues found and descq is full
 	 */
-	spin_unlock(&qdev->lock);
 #ifndef __QDMA_VF__
 	qcnt = qdma_get_device_active_queue_count(xdev->dma_device_index,
 			xdev->func_id, qconf->q_type);
-	spin_lock(&qdev->lock);
 #else
+	spin_unlock(&qdev->lock);
 	qdma_dev_get_active_qcnt(xdev, &h2c_qcnt, &c2h_qcnt, &cmpt_qcnt);
 	spin_lock(&qdev->lock);
 	if (qconf->q_type == Q_H2C)

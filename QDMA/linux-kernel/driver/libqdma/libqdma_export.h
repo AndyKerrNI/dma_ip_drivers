@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -664,7 +664,6 @@ struct qdma_queue_conf {
 
 	/**  MM Channel */
 	u8 mm_channel:1;
-	u8 mm_hostid:2;
 
 	/**  user provided per-Q irq handler */
 	unsigned long quld;		/* set by user for per Q data */

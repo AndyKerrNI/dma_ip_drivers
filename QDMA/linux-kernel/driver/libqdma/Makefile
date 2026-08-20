@@ -2,7 +2,7 @@
 # * This file is part of the Xilinx DMA IP Core driver for Linux
 # *
 # * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
-# * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+# * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
 # *
 # * This source code is free software; you can redistribute it and/or modify it
 # * under the terms and conditions of the GNU General Public License,
@@ -35,13 +35,13 @@ include $(srcdir)/../make_rules/common_flags.mk
 $(info srcdir = $(srcdir).)
 $(info KSRC = $(KSRC).)
 
-ccflags-y += -DLINUX -D__KERNEL__ -DMODULE -O2 -pipe -Wall -Werror
-ccflags-y += $(FLAGS) $(CPPFLAGS)
-ccflags-y += -I$(srcdir)/../include
-ccflags-y += -I$(KSRC)/../include
-ccflags-y += -I.
+EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -DMODULE -O2 -pipe -Wall -Werror
+EXTRA_CFLAGS += $(FLAGS) $(CPPFLAGS)
+EXTRA_CFLAGS += -I$(srcdir)/../include
+EXTRA_CFLAGS += -I$(KSRC)/../include
+EXTRA_CFLAGS += -I.
 
-#ccflags-y += -DDEBUG
+#EXTRA_CFLAGS += -DDEBUG
 
 ifneq ($(modulesymfile),)
   override symverfile = symverfile="$(topdir)/$(modulesymfile) \
