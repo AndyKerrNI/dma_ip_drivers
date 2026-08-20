@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * BSD LICENSE
  *
@@ -4107,7 +4107,7 @@ static int eqdma_cpm5_hw_context_read(void *dev_hndl, uint8_t c2h,
 		(uint8_t)(FIELD_GET(HW_IND_CTXT_DATA_W1_EVT_PND_MASK,
 			hw_ctxt[1]));
 	ctxt->fetch_pnd = (uint8_t)
-		(FIELD_GET(HW_IND_CTXT_DATA_W1_DSC_PND_MASK, hw_ctxt[1]));
+		(FIELD_GET(HW_IND_CTXT_DATA_W1_FETCH_PND_MASK, hw_ctxt[1]));
 
 	qdma_log_debug("%s: cidx=%hu, crd_use=%hu, dsc_pend=%x\n",
 			__func__, ctxt->cidx, ctxt->crd_use, ctxt->dsc_pend);
@@ -5475,7 +5475,7 @@ const char *eqdma_cpm5_hw_get_error_name(uint32_t err_idx)
  *****************************************************************************/
 int eqdma_cpm5_hw_error_process(void *dev_hndl)
 {
-	uint32_t glbl_err_stat = 0, err_stat = 0;
+	uint32_t glbl_err_stat = 0, err_stat = 0, glbl_err_mask = 0;
 	uint32_t bit = 0, i = 0;
 	int32_t idx = 0;
 	struct qdma_dev_attributes dev_cap;
@@ -5509,13 +5509,19 @@ int eqdma_cpm5_hw_error_process(void *dev_hndl)
 	if (!glbl_err_stat)
 		return QDMA_HW_ERR_NOT_DETECTED;
 
+	glbl_err_mask = qdma_reg_read(dev_hndl,
+			EQDMA_CPM5_GLBL_ERR_MASK_ADDR);
 
 	qdma_log_info("%s: Global Err Reg(0x%x) = 0x%x\n",
-				  __func__, EQDMA_CPM5_GLBL_ERR_STAT_ADDR,
-				  glbl_err_stat);
+			__func__, EQDMA_CPM5_GLBL_ERR_STAT_ADDR,
+			glbl_err_stat);
 
 	for (i = 0; i < EQDMA_CPM5_TOTAL_LEAF_ERROR_AGGREGATORS; i++) {
 		bit = hw_err_position[i];
+
+		if (!(glbl_err_stat & glbl_err_mask &
+			eqdma_cpm5_err_info[bit].global_err_mask))
+			continue;
 
 		if ((!dev_cap.st_en) &&
 			(bit == EQDMA_CPM5_ST_C2H_ERR_MTY_MISMATCH ||

@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2019-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,9 +239,6 @@ enum rte_pmd_qdma_ip_type {
 	RTE_PMD_QDMA_NONE_IP
 };
 
-
-
-
 /**
  * Structure to hold the QDMA device attributes
  *
@@ -292,7 +289,6 @@ struct rte_pmd_qdma_dev_attributes {
 	/** Versal IP Type */
 	enum rte_pmd_qdma_ip_type ip_type;
 };
-
 
 /******************************************************************************/
 /**

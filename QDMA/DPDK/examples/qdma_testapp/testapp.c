@@ -2,7 +2,7 @@
  *   BSD LICENSE
  *
  *   Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- *   Copyright (c) 2022-2023, Advanced Micro Devices, Inc. All rights reserved.
+ *   Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -739,6 +739,7 @@ void port_close(int port_id)
 		rte_mempool_free(mp);
 }
 
+
 int port_reset(int port_id, int num_queues, int st_queues,
 				int nb_descs, int buff_size)
 {
@@ -872,7 +873,6 @@ int port_init(int port_id, int num_queues, int st_queues,
 			port_id);
 		return -1;
 	}
-
 	snprintf(pinfo[port_id].mem_pool, RTE_MEMPOOL_NAMESIZE,
 			MBUF_POOL_NAME_PORT, port_id);
 
@@ -1104,8 +1104,8 @@ int main(int argc, char **argv)
 				continue;
 			}
 			/* Detach the port, it will invoke
-			 * device remove/uninit
-			 */
+			* device remove/uninit
+			*/
 			if (rte_pmd_qdma_dev_remove(port_id))
 				printf("Failed to detach port '%d'\n", port_id);
 		}

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * BSD LICENSE
  *
@@ -1328,7 +1328,6 @@ int qdma_hw_access_init(void *dev_hndl, uint8_t is_vf,
 					   __func__, -QDMA_ERR_INV_PARAM);
 		return -QDMA_ERR_INV_PARAM;
 	}
-
 	rv = qdma_is_config_bar(dev_hndl, is_vf, &ip);
 	if (rv != QDMA_SUCCESS) {
 		qdma_log_error("%s: config bar passed is INVALID, err:%d\n",
