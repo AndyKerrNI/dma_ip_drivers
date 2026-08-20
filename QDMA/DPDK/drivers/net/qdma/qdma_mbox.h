@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2019-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,5 +71,4 @@ int qdma_dev_notify_qadd(struct rte_eth_dev *dev, uint32_t qidx_hw,
 						enum qdma_dev_q_type q_type);
 int qdma_dev_notify_qdel(struct rte_eth_dev *dev, uint32_t qidx_hw,
 						enum qdma_dev_q_type q_type);
-
 #endif /* QDMA_DPDK_MBOX_H_ */
