@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2019-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,6 @@ static void qdma_mbox_process_msg_from_vf(void *arg)
 			rv != QDMA_MBOX_VF_RESET &&
 			rv != QDMA_MBOX_PF_RESET_DONE &&
 			rv != QDMA_MBOX_PF_BYE)
-
 		qdma_mbox_msg_send(dev, mbox_msg_rsp, 0);
 	else
 		qdma_mbox_msg_free(mbox_msg_rsp);
@@ -164,9 +163,9 @@ static void qdma_mbox_process_msg_from_pf(void *arg)
 
 	rv = qdma_mbox_vf_rcv_msg_handler(qdma_dev->mbox.rx_data,
 					  mbox_msg_rsp->raw_data);
-	if (rv) {
+	if (rv)
 		qdma_mbox_msg_send(dev, mbox_msg_rsp, 0);
-	} else {
+	else {
 		qdma_mbox_msg_free(mbox_msg_rsp);
 		return;
 	}
@@ -267,9 +266,9 @@ static void qdma_mbox_rcv_task(void *arg)
 		if (qdma_dev->is_vf) {
 			qdma_mbox_process_msg_from_pf(arg);
 			qdma_mbox_process_rsp_from_pf(arg);
-		} else {
+		} else
 			qdma_mbox_process_msg_from_vf(arg);
-		}
+
 	} while (1);
 
 	if (!qdma_dev->dev_cap.mailbox_intr)

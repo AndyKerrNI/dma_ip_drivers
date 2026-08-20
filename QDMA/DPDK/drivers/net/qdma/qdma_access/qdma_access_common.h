@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * BSD LICENSE
  *
@@ -89,6 +89,7 @@ static inline uint32_t get_trailing_zeros(uint64_t value)
 #define FIELD_SET(mask, val)    ((val << FIELD_SHIFT(mask)) & mask)
 #define FIELD_GET(mask, reg)    ((reg & mask) >> FIELD_SHIFT(mask))
 
+
 /* CSR Default values */
 #define DEFAULT_MAX_DSC_FETCH               6
 #define DEFAULT_WRB_INT                     QDMA_WRB_INTERVAL_128
@@ -144,8 +145,6 @@ enum ind_ctxt_cmd_sel {
 /* polling a register */
 #define	QDMA_REG_POLL_DFLT_INTERVAL_US	10		    /* 10us per poll */
 #define	QDMA_REG_POLL_DFLT_TIMEOUT_US	(500*1000)	/* 500ms */
-
-
 
 /** Constants */
 #define QDMA_NUM_RING_SIZES                                 16

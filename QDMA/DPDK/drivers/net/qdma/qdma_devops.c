@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -974,7 +974,7 @@ int qdma_dev_start(struct rte_eth_dev *dev)
 
 	PMD_DRV_LOG(INFO, "qdma-dev-start: Starting\n");
 
-	/* prepare descriptor rings for Operation */
+	/* prepare descriptor rings for operation */
 	for (qid = 0; qid < dev->data->nb_tx_queues; qid++) {
 		txq = (struct qdma_tx_queue *)dev->data->tx_queues[qid];
 

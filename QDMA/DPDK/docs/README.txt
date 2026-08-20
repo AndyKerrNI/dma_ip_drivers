@@ -15,12 +15,12 @@ Contents
 _____________________________________________________________________________
 
 
-Note: This DPDK driver and applciation were tested on Ubuntu 24.04 machine.
+Note: This DPDK driver and applciation were tested on Ubuntu 22.04.1 machine.
 
 
 1.) Setup: Download and modifications
 
-The reference driver code requires DPDK version 24.11.
+The reference driver code requires DPDK version 23.11.
 Follow the steps below to download the proper version of DPDK and apply
 driver code and test application supplied in the GitHub.
 
@@ -34,12 +34,12 @@ is installed and move to this directory.
  $ cd <server_dir>/<dpdk_test_area>
  $ git clone http://dpdk.org/git/dpdk-stable
  $ cd dpdk-stable
- $ git checkout v24.11
+ $ git checkout v23.11
  $ git clone git://dpdk.org/dpdk-kmods
  $ cp -r <dpdk_sw_database>/drivers/net/qdma ./drivers/net/
  $ cp -r <dpdk_sw_database>/examples/qdma_testapp ./examples/
 
-	Additionally, make below changes to the DPDK 24.11 tree to build QDMA driver,
+	Additionally, make below changes to the DPDK 23.11 tree to build QDMA driver,
 	support 4K queues and populate Xilinx devices for binding.
 
 		i. Add QDMA driver
@@ -47,7 +47,7 @@ is installed and move to this directory.
 				CONFIG_RTE_MAX_ETHPORTS=256
 				CONFIG_RTE_MAX_QUEUES_PER_PORT=4096
 
-			b. Add below lines to ./config/meson.build in DPDK 24.11 tree
+			b. Add below lines to ./config/meson.build in DPDK 23.11 tree
 				# Set maximum Ethernet ports to 256
 				dpdk_conf.set('RTE_MAX_ETHPORTS', 256)
 
@@ -525,7 +525,7 @@ Two ports:
  *   BSD LICENSE
  *
  *   Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- *   Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ *   Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
