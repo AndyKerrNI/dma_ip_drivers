@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,8 +69,6 @@ const struct rte_memzone *rxq_lat_buf_mz;
 double (*h2c_pidx_to_hw_cidx_lat)[LATENCY_CNT] = NULL;
 double (*c2h_pidx_to_cmpt_pidx_lat)[LATENCY_CNT] = NULL;
 #endif
-
-int qdma_logtype;
 
 static void qdma_device_attributes_get(struct rte_eth_dev *dev);
 
@@ -686,7 +684,7 @@ int qdma_eth_dev_init(struct rte_eth_dev *dev)
 	 * done by the master PF
 	 */
 	if (ret == QDMA_SUCCESS) {
-		PMD_DRV_LOG(INFO, "QDMA PMD VERSION: %s", QDMA_PMD_VERSION);
+		RTE_LOG(INFO, PMD, "QDMA PMD VERSION: %s\n", QDMA_PMD_VERSION);
 		dma_priv->hw_access->qdma_set_default_global_csr(dev);
 		for (i = 0; i < dma_priv->dev_cap.mm_channel_max; i++) {
 			if (dma_priv->dev_cap.mm_en) {
@@ -887,7 +885,6 @@ int qdma_eth_dev_uninit(struct rte_eth_dev *dev)
 	if (qdma_dev->dev_cap.mailbox_en && pci_dev->max_vfs)
 		qdma_mbox_uninit(dev);
 
-
 	/* cancel pending polls*/
 	if (qdma_dev->is_master)
 		rte_eal_alarm_cancel(qdma_check_errors, (void *)dev);
@@ -977,4 +974,3 @@ bool is_qdma_supported(struct rte_eth_dev *dev)
 
 RTE_PMD_REGISTER_PCI(net_qdma, rte_qdma_pmd);
 RTE_PMD_REGISTER_PCI_TABLE(net_qdma, qdma_pci_id_tbl);
-RTE_LOG_REGISTER_DEFAULT(qdma_logtype, INFO);
