@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@
 
 
 #if defined(QDMA_DPDK_21_11) || defined(QDMA_DPDK_22_11) || \
-    defined(QDMA_DPDK_23_11) ||  defined(QDMA_DPDK_24_11)
+    defined(QDMA_DPDK_23_11)
 
 void qdma_dev_tx_queue_release(struct rte_eth_dev *dev,
 			       uint16_t queue_id)
@@ -83,8 +83,8 @@ void qdma_dev_tx_queue_release(struct rte_eth_dev *dev,
 			rte_free(txq->sw_ring);
 		if (txq->tx_mz)
 			rte_memzone_free(txq->tx_mz);
-		PMD_DRV_LOG(INFO, "H2C queue %d removed", txq->queue_id);
 		rte_free(txq);
+		PMD_DRV_LOG(INFO, "H2C queue %d removed", txq->queue_id);
 	}
 }
 
@@ -129,8 +129,8 @@ void qdma_dev_rx_queue_release(struct rte_eth_dev *dev,
 		}
 		if (rxq->rx_mz)
 			rte_memzone_free(rxq->rx_mz);
-		PMD_DRV_LOG(INFO, "C2H queue %d removed", rxq->queue_id);
 		rte_free(rxq);
+		PMD_DRV_LOG(INFO, "C2H queue %d removed", rxq->queue_id);
 	}
 }
 
@@ -320,7 +320,7 @@ void rte_pmd_qdma_dev_started(int port_id, bool status)
 int rte_pmd_qdma_dev_fp_ops_config(int port_id)
 {
 #if defined(QDMA_DPDK_21_11) || defined(QDMA_DPDK_22_11) || \
-    defined(QDMA_DPDK_23_11) || defined(QDMA_DPDK_24_11)
+    defined(QDMA_DPDK_23_11)
 
 	struct rte_eth_dev *dev;
 	struct rte_eth_fp_ops *fpo = rte_eth_fp_ops;
