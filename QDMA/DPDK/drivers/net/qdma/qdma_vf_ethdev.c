@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -298,7 +298,6 @@ static int qdma_vf_set_qrange(struct rte_eth_dev *dev)
 	struct qdma_mbox_msg *m;
 	int rv = 0;
 
-
 	m = qdma_mbox_msg_alloc();
 	if (!m)
 		return -ENOMEM;
@@ -360,6 +359,7 @@ static int qdma_rxq_context_setup(struct rte_eth_dev *dev, uint16_t qid)
 
 	if (!m)
 		return -ENOMEM;
+
 	memset(&descq_conf, 0, sizeof(struct mbox_descq_conf));
 	rxq = (struct qdma_rx_queue *)dev->data->rx_queues[qid];
 	qid_hw =  qdma_dev->queue_base + rxq->queue_id;
@@ -461,6 +461,7 @@ static int qdma_txq_context_setup(struct rte_eth_dev *dev, uint16_t qid)
 
 	if (!m)
 		return -ENOMEM;
+
 	memset(&descq_conf, 0, sizeof(struct mbox_descq_conf));
 	txq = (struct qdma_tx_queue *)dev->data->tx_queues[qid];
 	qid_hw =  qdma_dev->queue_base + txq->queue_id;
@@ -542,7 +543,7 @@ static int qdma_vf_dev_start(struct rte_eth_dev *dev)
 	int err;
 
 	PMD_DRV_LOG(INFO, "qdma_dev_start: Starting\n");
-	/* prepare descriptor rings for operation */
+	/* prepare descriptor rings for Operation */
 	for (qid = 0; qid < dev->data->nb_tx_queues; qid++) {
 		txq = (struct qdma_tx_queue *)dev->data->tx_queues[qid];
 
@@ -1044,7 +1045,7 @@ static int eth_qdma_vf_dev_init(struct rte_eth_dev *dev)
 	}
 
 	if (once) {
-		RTE_LOG(INFO, PMD, "QDMA PMD VERSION: %s\n", QDMA_PMD_VERSION);
+		PMD_DRV_LOG(INFO, "QDMA PMD VERSION: %s", QDMA_PMD_VERSION);
 		once = false;
 	}
 

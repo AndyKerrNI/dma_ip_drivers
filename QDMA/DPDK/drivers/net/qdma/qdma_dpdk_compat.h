@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 #define __QDMA_DPDK_COMPAT_H__
 
 #if (defined(QDMA_DPDK_21_11) || defined(QDMA_DPDK_22_11) || \
-     defined(QDMA_DPDK_23_11))
+     defined(QDMA_DPDK_23_11) || defined(QDMA_DPDK_24_11))
 #include <ethdev_driver.h>
 #include <ethdev_pci.h>
 
@@ -146,7 +146,3 @@ void qdma_dev_rx_queue_release(void *rqueue);
 
 
 #endif /* ifndef __QDMA_DPDK_COMPAT_H__ */
-
-
-
-

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * BSD LICENSE
  *
@@ -186,6 +186,7 @@ void qdma_mbox_hw_init(void *dev_hndl, uint8_t is_vf);
 int qdma_mbox_pf_rcv_msg_handler(void *dev_hndl, uint8_t dma_device_index,
 				 uint16_t func_id, uint32_t *rcv_msg,
 				 uint32_t *resp_msg);
+
 
 /*****************************************************************************/
 /**
@@ -703,6 +704,7 @@ int qdma_mbox_vf_rcv_msg_handler(uint32_t *rcv_msg, uint32_t *resp_msg);
  * Return:	0 if MBOX outbox is empty, 1 if MBOX is not empty
  *****************************************************************************/
 uint8_t qdma_mbox_out_status(void *dev_hndl, uint8_t is_vf);
+
 
 #ifdef __cplusplus
 }
