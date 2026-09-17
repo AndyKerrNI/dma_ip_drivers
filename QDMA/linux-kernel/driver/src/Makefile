@@ -81,7 +81,6 @@ ifneq ($(shell $(grep) -c 'READ_ONCE' $(KINC)/linux/compiler.h),0)
   ccflags-y += -D__READ_ONCE_DEFINED__
 endif
 
-$(info EXTRA_FLAGS = $(EXTRA_FLAGS).)
 $(info ccflags-y = $(ccflags-y).)
 #ccflags-y += -DDEBUG
 

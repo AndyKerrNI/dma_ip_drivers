@@ -1745,7 +1745,7 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
  * #define C2H_PFCH_CACHE_DEPTH_MASK               GENMASK(7, 0)
  */
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_C2H_PFCH_CACHE_DEPTH_ADDR);
-	pftch_cache_depth = FIELD_GET(C2H_PFCH_CACHE_DEPTH_MASK, reg_val);
+	pftch_cache_depth = QDMA_FIELD_GET(C2H_PFCH_CACHE_DEPTH_MASK, reg_val);
 
 /*
  * #define EQDMA_CPM5_GLBL_DSC_CFG_ADDR      0x250
@@ -1764,15 +1764,15 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define GLBL_DSC_CFG_MAXFETCH           2
 #define GLBL_DSC_CFG_WB_ACC_INT         5
 	reg_val =
-		FIELD_SET(GLBL_DSC_CFG_RSVD_1_MASK, GLBL_DSC_CFG_RSVD_1_DFLT) |
-		FIELD_SET(GLBL_DSC_CFG_UNC_OVR_COR_MASK,
+		QDMA_FIELD_SET(GLBL_DSC_CFG_RSVD_1_MASK, GLBL_DSC_CFG_RSVD_1_DFLT) |
+		QDMA_FIELD_SET(GLBL_DSC_CFG_UNC_OVR_COR_MASK,
 					GLBL_DSC_CFG_UNC_OVR_COR_DFLT) |
-		FIELD_SET(GLBL_DSC_CFG_CTXT_FER_DIS_MASK,
+		QDMA_FIELD_SET(GLBL_DSC_CFG_CTXT_FER_DIS_MASK,
 					GLBL_DSC_CFG_CTXT_FER_DIS_DFLT) |
-		FIELD_SET(GLBL_DSC_CFG_RSVD_2_MASK, GLBL_DSC_CFG_RSVD_2_DFLT) |
-		FIELD_SET(GLBL_DSC_CFG_MAXFETCH_MASK,
+		QDMA_FIELD_SET(GLBL_DSC_CFG_RSVD_2_MASK, GLBL_DSC_CFG_RSVD_2_DFLT) |
+		QDMA_FIELD_SET(GLBL_DSC_CFG_MAXFETCH_MASK,
 					GLBL_DSC_CFG_MAXFETCH) |
-		FIELD_SET(GLBL_DSC_CFG_WB_ACC_INT_MASK,
+		QDMA_FIELD_SET(GLBL_DSC_CFG_WB_ACC_INT_MASK,
 					GLBL_DSC_CFG_WB_ACC_INT);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_GLBL_DSC_CFG_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_GLBL_DSC_CFG_ADDR);
@@ -1805,21 +1805,21 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define CFG_BLK_MISC_CTL_RSVD_3_DFLT             0
 #define EQDMA_CFG_BLK_MISC_CTL_RQ_METERING_MUL   31
 	reg_val =
-		FIELD_SET(CFG_BLK_MISC_CTL_RSVD_1_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_RSVD_1_MASK,
 					CFG_BLK_MISC_CTL_RSVD_1_DFLT) |
-		FIELD_SET(CFG_BLK_MISC_CTL_10B_TAG_EN_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_10B_TAG_EN_MASK,
 					CFG_BLK_MISC_CTL_10B_TAG_DFLT) |
-		FIELD_SET(CFG_BLK_MISC_CTL_RSVD_2_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_RSVD_2_MASK,
 					CFG_BLK_MISC_CTL_RSVD_2_DFLT) |
-		FIELD_SET(CFG_BLK_MISC_CTL_AXI_WBK_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_AXI_WBK_MASK,
 					CFG_BLK_MISC_CTL_AXI_WBK_DFLT) |
-		FIELD_SET(CFG_BLK_MISC_CTL_AXI_DSC_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_AXI_DSC_MASK,
 					CFG_BLK_MISC_CTL_AXI_DSC_DFLT) |
-		FIELD_SET(CFG_BLK_MISC_CTL_NUM_TAG_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_NUM_TAG_MASK,
 					CFG_BLK_MISC_CTL_NUM_TAG_DFLT) |
-		FIELD_SET(CFG_BLK_MISC_CTL_RSVD_3_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_RSVD_3_MASK,
 					CFG_BLK_MISC_CTL_RSVD_3_DFLT) |
-		FIELD_SET(CFG_BLK_MISC_CTL_RQ_METERING_MULTIPLIER_MASK,
+		QDMA_FIELD_SET(CFG_BLK_MISC_CTL_RQ_METERING_MULTIPLIER_MASK,
 					EQDMA_CFG_BLK_MISC_CTL_RQ_METERING_MUL);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_CFG_BLK_MISC_CTL_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_CFG_BLK_MISC_CTL_ADDR);
@@ -1834,9 +1834,9 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define EQDMA_PFTCH_CFG_EVT_PFTH_FL_TH         256
 #define C2H_PFCH_CFG_FL_TH_DFLT                256
 	reg_val =
-		FIELD_SET(C2H_PFCH_CFG_EVTFL_TH_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_EVTFL_TH_MASK,
 					EQDMA_PFTCH_CFG_EVT_PFTH_FL_TH) |
-		FIELD_SET(C2H_PFCH_CFG_FL_TH_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_FL_TH_MASK,
 					C2H_PFCH_CFG_FL_TH_DFLT);
 
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_C2H_PFCH_CFG_ADDR, reg_val);
@@ -1852,8 +1852,8 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 	pftch_qcnt = pftch_cache_depth - PREFETCH_QUEUE_COUNT_STEP;
 	pftch_evnt_qcnt_th = pftch_qcnt - PREFETCH_QUEUE_COUNT_STEP;
 	reg_val =
-		FIELD_SET(C2H_PFCH_CFG_1_EVT_QCNT_TH_MASK, pftch_evnt_qcnt_th) |
-		FIELD_SET(C2H_PFCH_CFG_1_QCNT_MASK, pftch_qcnt);
+		QDMA_FIELD_SET(C2H_PFCH_CFG_1_EVT_QCNT_TH_MASK, pftch_evnt_qcnt_th) |
+		QDMA_FIELD_SET(C2H_PFCH_CFG_1_QCNT_MASK, pftch_qcnt);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_C2H_PFCH_CFG_1_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_C2H_PFCH_CFG_1_ADDR);
 	qdma_log_info("%s: reg = 0x%08X val = 0x%08X\n",
@@ -1875,17 +1875,17 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define C2H_PFCH_CFG_2_VAR_DESC_NUM            15
 #define C2H_PFCH_CFG_2_NUM_PFCH_DFLT           16
 	reg_val =
-		FIELD_SET(C2H_PFCH_CFG_2_FENCE_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_2_FENCE_MASK,
 				C2H_PFCH_CFG_2_FENCE_EN) |
-		FIELD_SET(C2H_PFCH_CFG_2_RSVD_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_2_RSVD_MASK,
 				C2H_PFCH_CFG_2_RSVD_DFLT) |
-		FIELD_SET(C2H_PFCH_CFG_2_VAR_DESC_NO_DROP_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_2_VAR_DESC_NO_DROP_MASK,
 				C2H_PFCH_CFG_2_VAR_DESC_NO_DROP_DFLT) |
-		FIELD_SET(C2H_PFCH_CFG_2_LL_SZ_TH_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_2_LL_SZ_TH_MASK,
 				C2H_PFCH_CFG_2_LL_SZ_TH_DFLT) |
-		FIELD_SET(C2H_PFCH_CFG_2_VAR_DESC_NUM_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_2_VAR_DESC_NUM_MASK,
 				C2H_PFCH_CFG_2_VAR_DESC_NUM) |
-		FIELD_SET(C2H_PFCH_CFG_2_NUM_MASK,
+		QDMA_FIELD_SET(C2H_PFCH_CFG_2_NUM_MASK,
 				C2H_PFCH_CFG_2_NUM_PFCH_DFLT);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_C2H_PFCH_CFG_2_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_C2H_PFCH_CFG_2_ADDR);
@@ -1907,11 +1907,11 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define C2H_CRDT_COAL_CFG_1_PLD_FIFO_TH_DFLT       16
 #define C2H_CRDT_COAL_CFG_1_TIMER_TH               16
 	reg_val =
-		FIELD_SET(C2H_CRDT_COAL_CFG_1_RSVD_1_MASK,
+		QDMA_FIELD_SET(C2H_CRDT_COAL_CFG_1_RSVD_1_MASK,
 				C2H_CRDT_COAL_CFG_1_RSVD_1_DFLT) |
-		FIELD_SET(C2H_CRDT_COAL_CFG_1_PLD_FIFO_TH_MASK,
+		QDMA_FIELD_SET(C2H_CRDT_COAL_CFG_1_PLD_FIFO_TH_MASK,
 				C2H_CRDT_COAL_CFG_1_PLD_FIFO_TH_DFLT) |
-		FIELD_SET(C2H_CRDT_COAL_CFG_1_TIMER_TH_MASK,
+		QDMA_FIELD_SET(C2H_CRDT_COAL_CFG_1_TIMER_TH_MASK,
 				C2H_CRDT_COAL_CFG_1_TIMER_TH);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_C2H_CRDT_COAL_CFG_1_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_C2H_CRDT_COAL_CFG_1_ADDR);
@@ -1931,13 +1931,13 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 	crdt_coal_fifo_th = pftch_cache_depth - 8;
 	crdt_coal_crdt_th = C2H_CRDT_COAL_CFG_2_CRDT_CNT_TH_DFLT;
 	reg_val =
-		FIELD_SET(C2H_CRDT_COAL_CFG_2_RSVD_1_MASK,
+		QDMA_FIELD_SET(C2H_CRDT_COAL_CFG_2_RSVD_1_MASK,
 				C2H_CRDT_COAL_CFG_2_RSVD_1_DFLT) |
-		FIELD_SET(C2H_CRDT_COAL_CFG_2_FIFO_TH_MASK,
+		QDMA_FIELD_SET(C2H_CRDT_COAL_CFG_2_FIFO_TH_MASK,
 				crdt_coal_fifo_th) |
-		FIELD_SET(C2H_CRDT_COAL_CFG_2_RESERVED1_MASK,
+		QDMA_FIELD_SET(C2H_CRDT_COAL_CFG_2_RESERVED1_MASK,
 				C2H_CRDT_COAL_CFG_2_RESERVED1_DFLT) |
-		FIELD_SET(C2H_CRDT_COAL_CFG_2_NT_TH_MASK,
+		QDMA_FIELD_SET(C2H_CRDT_COAL_CFG_2_NT_TH_MASK,
 				crdt_coal_crdt_th);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_C2H_CRDT_COAL_CFG_2_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_C2H_CRDT_COAL_CFG_2_ADDR);
@@ -1961,13 +1961,13 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define H2C_REQ_THROT_PCIE_EN_DATA   1
 #define H2C_REQ_THROT_PCIE_DATA_TH   57344
 	reg_val =
-		FIELD_SET(H2C_REQ_THROT_PCIE_EN_REQ_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_PCIE_EN_REQ_MASK,
 					H2C_REQ_THROT_PCIE_EN_REQ) |
-		FIELD_SET(H2C_REQ_THROT_PCIE_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_PCIE_MASK,
 					H2C_REQ_THROT_PCIE_REQ_TH) |
-		FIELD_SET(H2C_REQ_THROT_PCIE_EN_DATA_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_PCIE_EN_DATA_MASK,
 					H2C_REQ_THROT_PCIE_EN_DATA) |
-		FIELD_SET(H2C_REQ_THROT_PCIE_DATA_THRESH_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_PCIE_DATA_THRESH_MASK,
 					H2C_REQ_THROT_PCIE_DATA_TH);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_H2C_REQ_THROT_PCIE_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_H2C_REQ_THROT_PCIE_ADDR);
@@ -1991,13 +1991,13 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define H2C_REQ_THROT_AXIMM_EN_DATA     0
 #define H2C_REQ_THROT_AXIMM_DATA_TH     65536
 	reg_val =
-		FIELD_SET(H2C_REQ_THROT_AXIMM_EN_REQ_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_AXIMM_EN_REQ_MASK,
 				H2C_REQ_THROT_AXIMM_EN_REQ) |
-		FIELD_SET(H2C_REQ_THROT_AXIMM_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_AXIMM_MASK,
 				H2C_REQ_THROT_AXIMM_REQ_TH) |
-		FIELD_SET(H2C_REQ_THROT_AXIMM_EN_DATA_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_AXIMM_EN_DATA_MASK,
 				H2C_REQ_THROT_AXIMM_EN_DATA) |
-		FIELD_SET(H2C_REQ_THROT_AXIMM_DATA_THRESH_MASK,
+		QDMA_FIELD_SET(H2C_REQ_THROT_AXIMM_DATA_THRESH_MASK,
 				H2C_REQ_THROT_AXIMM_DATA_TH);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_H2C_REQ_THROT_AXIMM_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_H2C_REQ_THROT_AXIMM_ADDR);
@@ -2012,10 +2012,10 @@ static void eqdma_cpm5_set_perf_opt(void *dev_hndl)
 #define H2C_MM_DATA_TH_EN                       1
 #define H2C_MM_DATA_TH                          57344
 	reg_val =
-		FIELD_SET(H2C_MM_DATA_THROTTLE_RSVD_1_MASK,
+		QDMA_FIELD_SET(H2C_MM_DATA_THROTTLE_RSVD_1_MASK,
 					H2C_MM_DATA_THROTTLE_RSVD_1_DFLT) |
-		FIELD_SET(H2C_MM_DATA_THROTTLE_DAT_EN_MASK, H2C_MM_DATA_TH_EN) |
-		FIELD_SET(H2C_MM_DATA_THROTTLE_DAT_MASK, H2C_MM_DATA_TH);
+		QDMA_FIELD_SET(H2C_MM_DATA_THROTTLE_DAT_EN_MASK, H2C_MM_DATA_TH_EN) |
+		QDMA_FIELD_SET(H2C_MM_DATA_THROTTLE_DAT_MASK, H2C_MM_DATA_TH);
 	qdma_reg_write(dev_hndl, EQDMA_CPM5_H2C_MM_DATA_THROTTLE_ADDR, reg_val);
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_H2C_MM_DATA_THROTTLE_ADDR);
 	qdma_log_info("%s: reg = 0x%08X val = 0x%08X\n",
@@ -2266,10 +2266,10 @@ static void eqdma_cpm5_fill_cmpt_ctxt(struct qdma_descq_cmpt_ctxt
 				cmpt_ctxt->lower_dword.bit.color;
 	eqdma_cpm5_cmpt_ctxt_entries[i++].value =
 				cmpt_ctxt->lower_dword.bit.ringsz_idx;
-	eqdma_cpm5_cmpt_ctxt_entries[i++].value = (uint32_t)FIELD_GET(
+	eqdma_cpm5_cmpt_ctxt_entries[i++].value = (uint32_t)QDMA_FIELD_GET(
 				EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_L_MASK,
 				cmpt_ctxt->bs_addr);
-	eqdma_cpm5_cmpt_ctxt_entries[i++].value = (uint32_t)FIELD_GET(
+	eqdma_cpm5_cmpt_ctxt_entries[i++].value = (uint32_t)QDMA_FIELD_GET(
 				EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_H_MASK,
 				cmpt_ctxt->bs_addr);
 	eqdma_cpm5_cmpt_ctxt_entries[i++].value =
@@ -2298,7 +2298,7 @@ static void eqdma_cpm5_fill_cmpt_ctxt(struct qdma_descq_cmpt_ctxt
 				cmpt_ctxt->higher_dword.bit.dis_intr_on_vf;
 	eqdma_cpm5_cmpt_ctxt_entries[i++].value =
 				cmpt_ctxt->higher_dword.bit.dir_c2h;
-	eqdma_cpm5_cmpt_ctxt_entries[i++].value = (uint32_t)FIELD_GET(
+	eqdma_cpm5_cmpt_ctxt_entries[i++].value = (uint32_t)QDMA_FIELD_GET(
 				EQDMA_CPM5_COMPL_CTXT_BADDR_LOW_MASK,
 				cmpt_ctxt->bs_addr);
 	eqdma_cpm5_cmpt_ctxt_entries[i++].value = cmpt_ctxt->sh_cmpt;
@@ -2443,9 +2443,9 @@ int eqdma_cpm5_set_default_global_csr(void *dev_hndl)
 
 		/* Writeback Interval */
 		reg_val =
-			FIELD_SET(GLBL_DSC_CFG_MAXFETCH_MASK,
+			QDMA_FIELD_SET(GLBL_DSC_CFG_MAXFETCH_MASK,
 					DEFAULT_MAX_DSC_FETCH) |
-			FIELD_SET(GLBL_DSC_CFG_WB_ACC_INT_MASK,
+			QDMA_FIELD_SET(GLBL_DSC_CFG_WB_ACC_INT_MASK,
 					DEFAULT_WRB_INT);
 		qdma_reg_write(dev_hndl, EQDMA_CPM5_GLBL_DSC_CFG_ADDR,
 				reg_val);
@@ -2458,11 +2458,11 @@ int eqdma_cpm5_set_default_global_csr(void *dev_hndl)
 
 		/* C2h Completion Coalesce Configuration */
 		reg_val =
-			FIELD_SET(C2H_WRB_COAL_CFG_TICK_CNT_MASK,
+			QDMA_FIELD_SET(C2H_WRB_COAL_CFG_TICK_CNT_MASK,
 				DEFAULT_CMPT_COAL_TIMER_CNT) |
-			FIELD_SET(C2H_WRB_COAL_CFG_TICK_VAL_MASK,
+			QDMA_FIELD_SET(C2H_WRB_COAL_CFG_TICK_VAL_MASK,
 				DEFAULT_CMPT_COAL_TIMER_TICK) |
-			FIELD_SET(C2H_WRB_COAL_CFG_MAX_BUF_SZ_MASK,
+			QDMA_FIELD_SET(C2H_WRB_COAL_CFG_MAX_BUF_SZ_MASK,
 				EQDMA_CPM5_DEFAULT_CMPT_COAL_MAX_BUF_SZ);
 		qdma_reg_write(dev_hndl, EQDMA_CPM5_C2H_WRB_COAL_CFG_ADDR,
 				reg_val);
@@ -3105,51 +3105,51 @@ static int eqdma_cpm5_sw_context_write(void *dev_hndl, uint8_t c2h,
 	}
 
 	pasid_l =
-		FIELD_GET(EQDMA_CPM5_SW_CTXT_PASID_GET_L_MASK, ctxt->pasid);
+		QDMA_FIELD_GET(EQDMA_CPM5_SW_CTXT_PASID_GET_L_MASK, ctxt->pasid);
 	pasid_h =
-		FIELD_GET(EQDMA_CPM5_SW_CTXT_PASID_GET_H_MASK, ctxt->pasid);
+		QDMA_FIELD_GET(EQDMA_CPM5_SW_CTXT_PASID_GET_H_MASK, ctxt->pasid);
 
-	virtio_desc_base_l = (uint32_t)FIELD_GET(
+	virtio_desc_base_l = (uint32_t)QDMA_FIELD_GET(
 		EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_L_MASK,
 		ctxt->virtio_dsc_base);
-	virtio_desc_base_m = (uint32_t)FIELD_GET(
+	virtio_desc_base_m = (uint32_t)QDMA_FIELD_GET(
 		EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_M_MASK,
 		ctxt->virtio_dsc_base);
-	virtio_desc_base_h = (uint32_t)FIELD_GET(
+	virtio_desc_base_h = (uint32_t)QDMA_FIELD_GET(
 		EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_H_MASK,
 		ctxt->virtio_dsc_base);
 
 	sw_ctxt[num_words_count++] =
-		FIELD_SET(SW_IND_CTXT_DATA_W0_PIDX_MASK, ctxt->pidx) |
-		FIELD_SET(SW_IND_CTXT_DATA_W0_IRQ_ARM_MASK, ctxt->irq_arm) |
-		FIELD_SET(SW_IND_CTXT_DATA_W0_FNC_MASK, ctxt->fnc_id);
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W0_PIDX_MASK, ctxt->pidx) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W0_IRQ_ARM_MASK, ctxt->irq_arm) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W0_FNC_MASK, ctxt->fnc_id);
 
 	qdma_log_debug("%s: pidx=%x, irq_arm=%x, fnc_id=%x\n",
 			 __func__, ctxt->pidx, ctxt->irq_arm, ctxt->fnc_id);
 
 	sw_ctxt[num_words_count++] =
-		FIELD_SET(SW_IND_CTXT_DATA_W1_QEN_MASK, ctxt->qen) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_FCRD_EN_MASK, ctxt->frcd_en) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_WBI_CHK_MASK, ctxt->wbi_chk) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_WBI_INTVL_EN_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_QEN_MASK, ctxt->qen) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_FCRD_EN_MASK, ctxt->frcd_en) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_WBI_CHK_MASK, ctxt->wbi_chk) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_WBI_INTVL_EN_MASK,
 				  ctxt->wbi_intvl_en) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_AT_MASK, ctxt->at) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_FETCH_MAX_MASK, ctxt->fetch_max) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_RNG_SZ_MASK, ctxt->rngsz_idx) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_DSC_SZ_MASK, ctxt->desc_sz) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_BYPASS_MASK, ctxt->bypass) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_MM_CHN_MASK, ctxt->mm_chn) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_WBK_EN_MASK, ctxt->wbk_en) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_IRQ_EN_MASK, ctxt->irq_en) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_PORT_ID_MASK, ctxt->port_id) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_IRQ_NO_LAST_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_AT_MASK, ctxt->at) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_FETCH_MAX_MASK, ctxt->fetch_max) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_RNG_SZ_MASK, ctxt->rngsz_idx) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_DSC_SZ_MASK, ctxt->desc_sz) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_BYPASS_MASK, ctxt->bypass) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_MM_CHN_MASK, ctxt->mm_chn) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_WBK_EN_MASK, ctxt->wbk_en) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_IRQ_EN_MASK, ctxt->irq_en) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_PORT_ID_MASK, ctxt->port_id) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_IRQ_NO_LAST_MASK,
 			ctxt->irq_no_last) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_ERR_MASK, ctxt->err) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_ERR_WB_SENT_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_ERR_MASK, ctxt->err) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_ERR_WB_SENT_MASK,
 			ctxt->err_wb_sent) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_IRQ_REQ_MASK, ctxt->irq_req) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_MRKR_DIS_MASK, ctxt->mrkr_dis) |
-		FIELD_SET(SW_IND_CTXT_DATA_W1_IS_MM_MASK, ctxt->is_mm);
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_IRQ_REQ_MASK, ctxt->irq_req) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_MRKR_DIS_MASK, ctxt->mrkr_dis) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W1_IS_MM_MASK, ctxt->is_mm);
 
 	qdma_log_debug("%s: qen=%x, frcd_en=%x, wbi_chk=%x, wbi_intvl_en=%x\n",
 			 __func__, ctxt->qen, ctxt->frcd_en, ctxt->wbi_chk,
@@ -3174,30 +3174,30 @@ static int eqdma_cpm5_sw_context_write(void *dev_hndl, uint8_t c2h,
 	sw_ctxt[num_words_count++] = (ctxt->ring_bs_addr >> 32) & 0xffffffff;
 
 	sw_ctxt[num_words_count++] =
-		FIELD_SET(SW_IND_CTXT_DATA_W4_VEC_MASK, ctxt->vec) |
-		FIELD_SET(SW_IND_CTXT_DATA_W4_INT_AGGR_MASK, ctxt->intr_aggr) |
-		FIELD_SET(SW_IND_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_VEC_MASK, ctxt->vec) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_INT_AGGR_MASK, ctxt->intr_aggr) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
 				ctxt->dis_intr_on_vf) |
-		FIELD_SET(SW_IND_CTXT_DATA_W4_VIRTIO_EN_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_VIRTIO_EN_MASK,
 				ctxt->virtio_en) |
-		FIELD_SET(SW_IND_CTXT_DATA_W4_PACK_BYP_OUT_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_PACK_BYP_OUT_MASK,
 				ctxt->pack_byp_out) |
-		FIELD_SET(SW_IND_CTXT_DATA_W4_IRQ_BYP_MASK, ctxt->irq_byp) |
-		FIELD_SET(SW_IND_CTXT_DATA_W4_HOST_ID_MASK, ctxt->host_id) |
-		FIELD_SET(SW_IND_CTXT_DATA_W4_PASID_L_MASK, pasid_l);
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_IRQ_BYP_MASK, ctxt->irq_byp) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_HOST_ID_MASK, ctxt->host_id) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W4_PASID_L_MASK, pasid_l);
 
 	sw_ctxt[num_words_count++] =
-		FIELD_SET(SW_IND_CTXT_DATA_W5_PASID_H_MASK, pasid_h) |
-		FIELD_SET(SW_IND_CTXT_DATA_W5_PASID_EN_MASK, ctxt->pasid_en) |
-		FIELD_SET(SW_IND_CTXT_DATA_W5_VIRTIO_DSC_BASE_L_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W5_PASID_H_MASK, pasid_h) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W5_PASID_EN_MASK, ctxt->pasid_en) |
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W5_VIRTIO_DSC_BASE_L_MASK,
 				virtio_desc_base_l);
 
 	sw_ctxt[num_words_count++] =
-		FIELD_SET(SW_IND_CTXT_DATA_W6_VIRTIO_DSC_BASE_M_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W6_VIRTIO_DSC_BASE_M_MASK,
 				virtio_desc_base_m);
 
 	sw_ctxt[num_words_count++] =
-		FIELD_SET(SW_IND_CTXT_DATA_W7_VIRTIO_DSC_BASE_H_MASK,
+		QDMA_FIELD_SET(SW_IND_CTXT_DATA_W7_VIRTIO_DSC_BASE_H_MASK,
 				virtio_desc_base_h);
 
 
@@ -3242,61 +3242,61 @@ static int eqdma_cpm5_sw_context_read(void *dev_hndl, uint8_t c2h,
 	if (rv < 0)
 		return rv;
 
-	ctxt->pidx = FIELD_GET(SW_IND_CTXT_DATA_W0_PIDX_MASK, sw_ctxt[0]);
+	ctxt->pidx = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W0_PIDX_MASK, sw_ctxt[0]);
 	ctxt->irq_arm =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W0_IRQ_ARM_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W0_IRQ_ARM_MASK,
 				sw_ctxt[0]));
-	ctxt->fnc_id = FIELD_GET(SW_IND_CTXT_DATA_W0_FNC_MASK, sw_ctxt[0]);
+	ctxt->fnc_id = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W0_FNC_MASK, sw_ctxt[0]);
 
 	qdma_log_debug("%s: pidx=%x, irq_arm=%x, fnc_id=%x",
 			 __func__, ctxt->pidx, ctxt->irq_arm, ctxt->fnc_id);
 
-	ctxt->qen = FIELD_GET(SW_IND_CTXT_DATA_W1_QEN_MASK, sw_ctxt[1]);
-	ctxt->frcd_en = FIELD_GET(SW_IND_CTXT_DATA_W1_FCRD_EN_MASK, sw_ctxt[1]);
-	ctxt->wbi_chk = FIELD_GET(SW_IND_CTXT_DATA_W1_WBI_CHK_MASK, sw_ctxt[1]);
+	ctxt->qen = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_QEN_MASK, sw_ctxt[1]);
+	ctxt->frcd_en = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_FCRD_EN_MASK, sw_ctxt[1]);
+	ctxt->wbi_chk = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_WBI_CHK_MASK, sw_ctxt[1]);
 	ctxt->wbi_intvl_en =
-		FIELD_GET(SW_IND_CTXT_DATA_W1_WBI_INTVL_EN_MASK, sw_ctxt[1]);
-	ctxt->at = FIELD_GET(SW_IND_CTXT_DATA_W1_AT_MASK, sw_ctxt[1]);
+		QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_WBI_INTVL_EN_MASK, sw_ctxt[1]);
+	ctxt->at = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_AT_MASK, sw_ctxt[1]);
 	ctxt->fetch_max =
-		(uint8_t)FIELD_GET(SW_IND_CTXT_DATA_W1_FETCH_MAX_MASK,
+		(uint8_t)QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_FETCH_MAX_MASK,
 				sw_ctxt[1]);
 	ctxt->rngsz_idx =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_RNG_SZ_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_RNG_SZ_MASK,
 				sw_ctxt[1]));
 	ctxt->desc_sz =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_DSC_SZ_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_DSC_SZ_MASK,
 				sw_ctxt[1]));
 	ctxt->bypass =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_BYPASS_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_BYPASS_MASK,
 				sw_ctxt[1]));
 	ctxt->mm_chn =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_MM_CHN_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_MM_CHN_MASK,
 				sw_ctxt[1]));
 	ctxt->wbk_en =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_WBK_EN_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_WBK_EN_MASK,
 				sw_ctxt[1]));
 	ctxt->irq_en =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_IRQ_EN_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_IRQ_EN_MASK,
 				sw_ctxt[1]));
 	ctxt->port_id =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_PORT_ID_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_PORT_ID_MASK,
 				sw_ctxt[1]));
 	ctxt->irq_no_last =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_IRQ_NO_LAST_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_IRQ_NO_LAST_MASK,
 			sw_ctxt[1]));
 	ctxt->err =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_ERR_MASK, sw_ctxt[1]));
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_ERR_MASK, sw_ctxt[1]));
 	ctxt->err_wb_sent =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_ERR_WB_SENT_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_ERR_WB_SENT_MASK,
 			sw_ctxt[1]));
 	ctxt->irq_req =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_IRQ_REQ_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_IRQ_REQ_MASK,
 				sw_ctxt[1]));
 	ctxt->mrkr_dis =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_MRKR_DIS_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_MRKR_DIS_MASK,
 				sw_ctxt[1]));
 	ctxt->is_mm =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W1_IS_MM_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W1_IS_MM_MASK,
 				sw_ctxt[1]));
 
 	qdma_log_debug("%s: qen=%x, frcd_en=%x, wbi_chk=%x, wbi_intvl_en=%x\n",
@@ -3317,50 +3317,50 @@ static int eqdma_cpm5_sw_context_read(void *dev_hndl, uint8_t c2h,
 
 	ctxt->ring_bs_addr = ((uint64_t)sw_ctxt[3] << 32) | (sw_ctxt[2]);
 
-	ctxt->vec = FIELD_GET(SW_IND_CTXT_DATA_W4_VEC_MASK, sw_ctxt[4]);
-	ctxt->intr_aggr = (uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W4_INT_AGGR_MASK,
+	ctxt->vec = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_VEC_MASK, sw_ctxt[4]);
+	ctxt->intr_aggr = (uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_INT_AGGR_MASK,
 			sw_ctxt[4]));
 	ctxt->dis_intr_on_vf =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
 				sw_ctxt[4]));
 	ctxt->virtio_en =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W4_VIRTIO_EN_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_VIRTIO_EN_MASK,
 				sw_ctxt[4]));
 	ctxt->pack_byp_out =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W4_PACK_BYP_OUT_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_PACK_BYP_OUT_MASK,
 				sw_ctxt[4]));
 	ctxt->irq_byp =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W4_IRQ_BYP_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_IRQ_BYP_MASK,
 				sw_ctxt[4]));
 	ctxt->host_id =
-		(uint8_t)(FIELD_GET(SW_IND_CTXT_DATA_W4_HOST_ID_MASK,
+		(uint8_t)(QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_HOST_ID_MASK,
 				sw_ctxt[4]));
-	pasid_l = FIELD_GET(SW_IND_CTXT_DATA_W4_PASID_L_MASK, sw_ctxt[4]);
+	pasid_l = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W4_PASID_L_MASK, sw_ctxt[4]);
 
-	pasid_h = FIELD_GET(SW_IND_CTXT_DATA_W5_PASID_H_MASK, sw_ctxt[5]);
-	ctxt->pasid_en = (uint8_t)FIELD_GET(SW_IND_CTXT_DATA_W5_PASID_EN_MASK,
+	pasid_h = QDMA_FIELD_GET(SW_IND_CTXT_DATA_W5_PASID_H_MASK, sw_ctxt[5]);
+	ctxt->pasid_en = (uint8_t)QDMA_FIELD_GET(SW_IND_CTXT_DATA_W5_PASID_EN_MASK,
 			sw_ctxt[5]);
 	virtio_desc_base_l =
-		FIELD_GET(SW_IND_CTXT_DATA_W5_VIRTIO_DSC_BASE_L_MASK,
+		QDMA_FIELD_GET(SW_IND_CTXT_DATA_W5_VIRTIO_DSC_BASE_L_MASK,
 				sw_ctxt[5]);
 	virtio_desc_base_m =
-		FIELD_GET(SW_IND_CTXT_DATA_W6_VIRTIO_DSC_BASE_M_MASK,
+		QDMA_FIELD_GET(SW_IND_CTXT_DATA_W6_VIRTIO_DSC_BASE_M_MASK,
 				sw_ctxt[6]);
 
 	virtio_desc_base_h =
-		FIELD_GET(SW_IND_CTXT_DATA_W7_VIRTIO_DSC_BASE_H_MASK,
+		QDMA_FIELD_GET(SW_IND_CTXT_DATA_W7_VIRTIO_DSC_BASE_H_MASK,
 				sw_ctxt[6]);
 
 	ctxt->pasid =
-		FIELD_SET(EQDMA_CPM5_SW_CTXT_PASID_GET_L_MASK, pasid_l) |
-		FIELD_SET(EQDMA_CPM5_SW_CTXT_PASID_GET_H_MASK, pasid_h);
+		QDMA_FIELD_SET(EQDMA_CPM5_SW_CTXT_PASID_GET_L_MASK, pasid_l) |
+		QDMA_FIELD_SET(EQDMA_CPM5_SW_CTXT_PASID_GET_H_MASK, pasid_h);
 
 	ctxt->virtio_dsc_base =
-		FIELD_SET(EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_L_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_L_MASK,
 					(uint64_t)virtio_desc_base_l) |
-		FIELD_SET(EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_M_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_M_MASK,
 					(uint64_t)virtio_desc_base_m) |
-		FIELD_SET(EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_H_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_SW_CTXT_VIRTIO_DSC_BASE_GET_H_MASK,
 					(uint64_t)virtio_desc_base_h);
 
 	qdma_log_debug("%s: vec=%x, intr_aggr=%x\n",
@@ -3490,26 +3490,26 @@ static int eqdma_cpm5_pfetch_context_write(void *dev_hndl, uint16_t hw_qid,
 	}
 
 	sw_crdt_l =
-		FIELD_GET(QDMA_PFTCH_CTXT_SW_CRDT_GET_L_MASK, ctxt->sw_crdt);
+		QDMA_FIELD_GET(QDMA_PFTCH_CTXT_SW_CRDT_GET_L_MASK, ctxt->sw_crdt);
 	sw_crdt_h =
-		FIELD_GET(QDMA_PFTCH_CTXT_SW_CRDT_GET_H_MASK, ctxt->sw_crdt);
+		QDMA_FIELD_GET(QDMA_PFTCH_CTXT_SW_CRDT_GET_H_MASK, ctxt->sw_crdt);
 
 	qdma_log_debug("%s: sw_crdt_l=%u, sw_crdt_h=%u, hw_qid=%hu\n",
 			 __func__, sw_crdt_l, sw_crdt_h, hw_qid);
 
 	pfetch_ctxt[num_words_count++] =
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_BYPASS_MASK, ctxt->bypass) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_BUF_SZ_IDX_MASK,
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_BYPASS_MASK, ctxt->bypass) |
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_BUF_SZ_IDX_MASK,
 				ctxt->bufsz_idx) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_PORT_ID_MASK, ctxt->port_id) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_NUM_PFCH_MASK,
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_PORT_ID_MASK, ctxt->port_id) |
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_NUM_PFCH_MASK,
 				ctxt->num_pftch) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_VAR_DESC_MASK,
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_VAR_DESC_MASK,
 				ctxt->var_desc) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_ERR_MASK, ctxt->err) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_PFCH_EN_MASK, ctxt->pfch_en) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_PFCH_MASK, ctxt->pfch) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W0_SW_CRDT_L_MASK, sw_crdt_l);
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_ERR_MASK, ctxt->err) |
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_PFCH_EN_MASK, ctxt->pfch_en) |
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_PFCH_MASK, ctxt->pfch) |
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W0_SW_CRDT_L_MASK, sw_crdt_l);
 
 	qdma_log_debug("%s: bypass=%x, bufsz_idx=%x, port_id=%x\n",
 			__func__, ctxt->bypass, ctxt->bufsz_idx, ctxt->port_id);
@@ -3518,8 +3518,8 @@ static int eqdma_cpm5_pfetch_context_write(void *dev_hndl, uint16_t hw_qid,
 			ctxt->valid);
 
 	pfetch_ctxt[num_words_count++] =
-		FIELD_SET(PREFETCH_CTXT_DATA_W1_SW_CRDT_H_MASK, sw_crdt_h) |
-		FIELD_SET(PREFETCH_CTXT_DATA_W1_VALID_MASK, ctxt->valid);
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W1_SW_CRDT_H_MASK, sw_crdt_h) |
+		QDMA_FIELD_SET(PREFETCH_CTXT_DATA_W1_VALID_MASK, ctxt->valid);
 
 	return eqdma_cpm5_indirect_reg_write(dev_hndl, sel, hw_qid,
 			pfetch_ctxt, num_words_count);
@@ -3555,38 +3555,38 @@ static int eqdma_cpm5_pfetch_context_read(void *dev_hndl, uint16_t hw_qid,
 		return rv;
 
 	ctxt->bypass =
-		FIELD_GET(PREFETCH_CTXT_DATA_W0_BYPASS_MASK, pfetch_ctxt[0]);
+		QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_BYPASS_MASK, pfetch_ctxt[0]);
 	ctxt->bufsz_idx =
-		FIELD_GET(PREFETCH_CTXT_DATA_W0_BUF_SZ_IDX_MASK,
+		QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_BUF_SZ_IDX_MASK,
 			pfetch_ctxt[0]);
-	ctxt->num_pftch = (uint16_t) FIELD_GET(
+	ctxt->num_pftch = (uint16_t) QDMA_FIELD_GET(
 			PREFETCH_CTXT_DATA_W0_NUM_PFCH_MASK, pfetch_ctxt[0]);
 	ctxt->port_id =
-		FIELD_GET(PREFETCH_CTXT_DATA_W0_PORT_ID_MASK, pfetch_ctxt[0]);
+		QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_PORT_ID_MASK, pfetch_ctxt[0]);
 	ctxt->var_desc = (uint8_t)
-		FIELD_GET(PREFETCH_CTXT_DATA_W0_VAR_DESC_MASK,
+		QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_VAR_DESC_MASK,
 				pfetch_ctxt[0]);
 	ctxt->err =
-		(uint8_t)(FIELD_GET(PREFETCH_CTXT_DATA_W0_ERR_MASK,
+		(uint8_t)(QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_ERR_MASK,
 			pfetch_ctxt[0]));
 	ctxt->pfch_en =
-		(uint8_t)(FIELD_GET(PREFETCH_CTXT_DATA_W0_PFCH_EN_MASK,
+		(uint8_t)(QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_PFCH_EN_MASK,
 			pfetch_ctxt[0]));
 	ctxt->pfch =
-		(uint8_t)(FIELD_GET(PREFETCH_CTXT_DATA_W0_PFCH_MASK,
+		(uint8_t)(QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_PFCH_MASK,
 				pfetch_ctxt[0]));
 	sw_crdt_l =
-		FIELD_GET(PREFETCH_CTXT_DATA_W0_SW_CRDT_L_MASK, pfetch_ctxt[0]);
+		QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W0_SW_CRDT_L_MASK, pfetch_ctxt[0]);
 
 	sw_crdt_h =
-		FIELD_GET(PREFETCH_CTXT_DATA_W1_SW_CRDT_H_MASK, pfetch_ctxt[1]);
+		QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W1_SW_CRDT_H_MASK, pfetch_ctxt[1]);
 	ctxt->valid =
-		(uint8_t)(FIELD_GET(PREFETCH_CTXT_DATA_W1_VALID_MASK,
+		(uint8_t)(QDMA_FIELD_GET(PREFETCH_CTXT_DATA_W1_VALID_MASK,
 			pfetch_ctxt[1]));
 
 	ctxt->sw_crdt =
-		FIELD_SET(QDMA_PFTCH_CTXT_SW_CRDT_GET_L_MASK, sw_crdt_l) |
-		FIELD_SET(QDMA_PFTCH_CTXT_SW_CRDT_GET_H_MASK, sw_crdt_h);
+		QDMA_FIELD_SET(QDMA_PFTCH_CTXT_SW_CRDT_GET_L_MASK, sw_crdt_l) |
+		QDMA_FIELD_SET(QDMA_PFTCH_CTXT_SW_CRDT_GET_H_MASK, sw_crdt_h);
 
 	qdma_log_debug("%s: sw_crdt_l=%u, sw_crdt_h=%u, hw_qid=%hu\n",
 			 __func__, sw_crdt_l, sw_crdt_h, hw_qid);
@@ -3727,94 +3727,94 @@ static int eqdma_cpm5_cmpt_context_write(void *dev_hndl, uint16_t hw_qid,
 	}
 
 	baddr4_high_l =
-		(uint32_t)FIELD_GET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_L_MASK,
+		(uint32_t)QDMA_FIELD_GET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_L_MASK,
 			ctxt->bs_addr);
 	baddr4_high_h =
-		(uint32_t)FIELD_GET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_H_MASK,
+		(uint32_t)QDMA_FIELD_GET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_H_MASK,
 			ctxt->bs_addr);
 	baddr4_low =
-		(uint32_t)FIELD_GET(EQDMA_CPM5_COMPL_CTXT_BADDR_LOW_MASK,
+		(uint32_t)QDMA_FIELD_GET(EQDMA_CPM5_COMPL_CTXT_BADDR_LOW_MASK,
 			ctxt->bs_addr);
 
-	pidx_l = FIELD_GET(QDMA_COMPL_CTXT_PIDX_GET_L_MASK, ctxt->pidx);
-	pidx_h = FIELD_GET(QDMA_COMPL_CTXT_PIDX_GET_H_MASK, ctxt->pidx);
+	pidx_l = QDMA_FIELD_GET(QDMA_COMPL_CTXT_PIDX_GET_L_MASK, ctxt->pidx);
+	pidx_h = QDMA_FIELD_GET(QDMA_COMPL_CTXT_PIDX_GET_H_MASK, ctxt->pidx);
 
 	pasid_l =
-		FIELD_GET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_L_MASK,
+		QDMA_FIELD_GET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_L_MASK,
 				ctxt->pasid);
 	pasid_h =
-		FIELD_GET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_H_MASK,
+		QDMA_FIELD_GET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_H_MASK,
 				ctxt->pasid);
 
 	cmpt_ctxt[num_words_count++] =
-		FIELD_SET(CMPL_CTXT_DATA_W0_EN_STAT_DESC_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_EN_STAT_DESC_MASK,
 				ctxt->lower_dword.bit.en_stat_desc) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_EN_INT_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_EN_INT_MASK,
 				ctxt->lower_dword.bit.en_int) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_TRIG_MODE_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_TRIG_MODE_MASK,
 				ctxt->lower_dword.bit.trig_mode) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_FNC_ID_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_FNC_ID_MASK,
 				ctxt->lower_dword.bit.fnc_id) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_CNTER_IX_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_CNTER_IX_MASK,
 				ctxt->lower_dword.bit.counter_idx) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_TIMER_IX_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_TIMER_IX_MASK,
 				ctxt->lower_dword.bit.timer_idx) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_INT_ST_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_INT_ST_MASK,
 				ctxt->lower_dword.bit.in_st) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_COLOR_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_COLOR_MASK,
 				ctxt->lower_dword.bit.color) |
-		FIELD_SET(CMPL_CTXT_DATA_W0_QSIZE_IX_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W0_QSIZE_IX_MASK,
 				ctxt->lower_dword.bit.ringsz_idx);
 
 	cmpt_ctxt[num_words_count++] =
-		FIELD_SET(CMPL_CTXT_DATA_W1_BADDR4_HIGH_L_MASK, baddr4_high_l);
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W1_BADDR4_HIGH_L_MASK, baddr4_high_l);
 
 	cmpt_ctxt[num_words_count++] =
-		FIELD_SET(CMPL_CTXT_DATA_W2_BADDR4_HIGH_H_MASK, baddr4_high_h) |
-		FIELD_SET(CMPL_CTXT_DATA_W2_DESC_SIZE_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W2_BADDR4_HIGH_H_MASK, baddr4_high_h) |
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W2_DESC_SIZE_MASK,
 				ctxt->higher_dword.bit.desc_sz) |
-		FIELD_SET(CMPL_CTXT_DATA_W2_PIDX_L_MASK, pidx_l);
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W2_PIDX_L_MASK, pidx_l);
 
 	cmpt_ctxt[num_words_count++] =
-		FIELD_SET(CMPL_CTXT_DATA_W3_PIDX_H_MASK, pidx_h) |
-		FIELD_SET(CMPL_CTXT_DATA_W3_CIDX_MASK, ctxt->cidx) |
-		FIELD_SET(CMPL_CTXT_DATA_W3_VALID_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W3_PIDX_H_MASK, pidx_h) |
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W3_CIDX_MASK, ctxt->cidx) |
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W3_VALID_MASK,
 				ctxt->higher_dword.bit.valid) |
-		FIELD_SET(CMPL_CTXT_DATA_W3_ERR_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W3_ERR_MASK,
 				ctxt->higher_dword.bit.err) |
-		FIELD_SET(CMPL_CTXT_DATA_W3_USER_TRIG_PEND_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W3_USER_TRIG_PEND_MASK,
 				ctxt->higher_dword.bit.user_trig_pend);
 
 	cmpt_ctxt[num_words_count++] =
-		FIELD_SET(CMPL_CTXT_DATA_W4_TIMER_RUNNING_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_TIMER_RUNNING_MASK,
 				ctxt->higher_dword.bit.timer_running) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_FULL_UPD_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_FULL_UPD_MASK,
 				ctxt->higher_dword.bit.full_upd) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_OVF_CHK_DIS_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_OVF_CHK_DIS_MASK,
 				ctxt->higher_dword.bit.ovf_chk_dis) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_AT_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_AT_MASK,
 				ctxt->higher_dword.bit.at) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_VEC_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_VEC_MASK,
 				ctxt->higher_dword.bit.vec) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_INT_AGGR_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_INT_AGGR_MASK,
 				ctxt->higher_dword.bit.int_aggr) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
 				ctxt->higher_dword.bit.dis_intr_on_vf) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_VIO_MASK, ctxt->vio) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_DIR_C2H_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_VIO_MASK, ctxt->vio) |
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_DIR_C2H_MASK,
 				ctxt->higher_dword.bit.dir_c2h) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_HOST_ID_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_HOST_ID_MASK,
 				ctxt->higher_dword.bit.host_id) |
-		FIELD_SET(CMPL_CTXT_DATA_W4_PASID_L_MASK, pasid_l);
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W4_PASID_L_MASK, pasid_l);
 
 	cmpt_ctxt[num_words_count++] =
-		FIELD_SET(CMPL_CTXT_DATA_W5_PASID_H_MASK, pasid_h) |
-		FIELD_SET(CMPL_CTXT_DATA_W5_PASID_EN_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W5_PASID_H_MASK, pasid_h) |
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W5_PASID_EN_MASK,
 				ctxt->pasid_en) |
-		FIELD_SET(CMPL_CTXT_DATA_W5_BADDR4_LOW_MASK,
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W5_BADDR4_LOW_MASK,
 				baddr4_low) |
-		FIELD_SET(CMPL_CTXT_DATA_W5_VIO_EOP_MASK, ctxt->vio_eop) |
-		FIELD_SET(CMPL_CTXT_DATA_W5_SH_CMPT_MASK, ctxt->sh_cmpt);
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W5_VIO_EOP_MASK, ctxt->vio_eop) |
+		QDMA_FIELD_SET(CMPL_CTXT_DATA_W5_SH_CMPT_MASK, ctxt->sh_cmpt);
 
 	return eqdma_cpm5_indirect_reg_write(dev_hndl, sel, hw_qid,
 			cmpt_ctxt, num_words_count);
@@ -3851,110 +3851,110 @@ static int eqdma_cpm5_cmpt_context_read(void *dev_hndl, uint16_t hw_qid,
 		return rv;
 
 	ctxt->lower_dword.bit.en_stat_desc =
-			FIELD_GET(CMPL_CTXT_DATA_W0_EN_STAT_DESC_MASK,
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_EN_STAT_DESC_MASK,
 			cmpt_ctxt[0]);
 	ctxt->lower_dword.bit.en_int =
-			FIELD_GET(CMPL_CTXT_DATA_W0_EN_INT_MASK, cmpt_ctxt[0]);
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_EN_INT_MASK, cmpt_ctxt[0]);
 	ctxt->lower_dword.bit.trig_mode =
-		FIELD_GET(CMPL_CTXT_DATA_W0_TRIG_MODE_MASK, cmpt_ctxt[0]);
+		QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_TRIG_MODE_MASK, cmpt_ctxt[0]);
 	ctxt->lower_dword.bit.fnc_id =
-			FIELD_GET(CMPL_CTXT_DATA_W0_FNC_ID_MASK, cmpt_ctxt[0]);
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_FNC_ID_MASK, cmpt_ctxt[0]);
 	ctxt->lower_dword.bit.counter_idx =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W0_CNTER_IX_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_CNTER_IX_MASK,
 			cmpt_ctxt[0]));
 	ctxt->lower_dword.bit.timer_idx =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W0_TIMER_IX_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_TIMER_IX_MASK,
 			cmpt_ctxt[0]));
 	ctxt->lower_dword.bit.in_st =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W0_INT_ST_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_INT_ST_MASK,
 			cmpt_ctxt[0]));
 	ctxt->lower_dword.bit.color =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W0_COLOR_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_COLOR_MASK,
 			cmpt_ctxt[0]));
 	ctxt->lower_dword.bit.ringsz_idx =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W0_QSIZE_IX_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W0_QSIZE_IX_MASK,
 			cmpt_ctxt[0]));
 
-	baddr4_high_l = FIELD_GET(CMPL_CTXT_DATA_W1_BADDR4_HIGH_L_MASK,
+	baddr4_high_l = QDMA_FIELD_GET(CMPL_CTXT_DATA_W1_BADDR4_HIGH_L_MASK,
 			cmpt_ctxt[1]);
 
-	baddr4_high_h = FIELD_GET(CMPL_CTXT_DATA_W2_BADDR4_HIGH_H_MASK,
+	baddr4_high_h = QDMA_FIELD_GET(CMPL_CTXT_DATA_W2_BADDR4_HIGH_H_MASK,
 			cmpt_ctxt[2]);
 	ctxt->higher_dword.bit.desc_sz =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W2_DESC_SIZE_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W2_DESC_SIZE_MASK,
 			cmpt_ctxt[2]));
-	pidx_l = FIELD_GET(CMPL_CTXT_DATA_W2_PIDX_L_MASK, cmpt_ctxt[2]);
+	pidx_l = QDMA_FIELD_GET(CMPL_CTXT_DATA_W2_PIDX_L_MASK, cmpt_ctxt[2]);
 
-	pidx_h = FIELD_GET(CMPL_CTXT_DATA_W3_PIDX_H_MASK, cmpt_ctxt[3]);
+	pidx_h = QDMA_FIELD_GET(CMPL_CTXT_DATA_W3_PIDX_H_MASK, cmpt_ctxt[3]);
 	ctxt->cidx =
-		(uint16_t)(FIELD_GET(CMPL_CTXT_DATA_W3_CIDX_MASK,
+		(uint16_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W3_CIDX_MASK,
 			cmpt_ctxt[3]));
 	ctxt->higher_dword.bit.valid =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W3_VALID_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W3_VALID_MASK,
 			cmpt_ctxt[3]));
 	ctxt->higher_dword.bit.err =
-		(uint8_t)(FIELD_GET(CMPL_CTXT_DATA_W3_ERR_MASK,
+		(uint8_t)(QDMA_FIELD_GET(CMPL_CTXT_DATA_W3_ERR_MASK,
 			cmpt_ctxt[3]));
 	ctxt->higher_dword.bit.user_trig_pend = (uint8_t)
-		(FIELD_GET(CMPL_CTXT_DATA_W3_USER_TRIG_PEND_MASK,
+		(QDMA_FIELD_GET(CMPL_CTXT_DATA_W3_USER_TRIG_PEND_MASK,
 			cmpt_ctxt[3]));
 
 	ctxt->higher_dword.bit.timer_running =
-			FIELD_GET(CMPL_CTXT_DATA_W4_TIMER_RUNNING_MASK,
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_TIMER_RUNNING_MASK,
 			cmpt_ctxt[4]);
 	ctxt->higher_dword.bit.full_upd =
-			FIELD_GET(CMPL_CTXT_DATA_W4_FULL_UPD_MASK,
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_FULL_UPD_MASK,
 			cmpt_ctxt[4]);
 	ctxt->higher_dword.bit.ovf_chk_dis =
-			FIELD_GET(CMPL_CTXT_DATA_W4_OVF_CHK_DIS_MASK,
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_OVF_CHK_DIS_MASK,
 			cmpt_ctxt[4]);
 	ctxt->higher_dword.bit.at =
-			FIELD_GET(CMPL_CTXT_DATA_W4_AT_MASK, cmpt_ctxt[4]);
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_AT_MASK, cmpt_ctxt[4]);
 	ctxt->higher_dword.bit.vec =
-			FIELD_GET(CMPL_CTXT_DATA_W4_VEC_MASK, cmpt_ctxt[4]);
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_VEC_MASK, cmpt_ctxt[4]);
 	ctxt->higher_dword.bit.int_aggr = (uint8_t)
-			(FIELD_GET(CMPL_CTXT_DATA_W4_INT_AGGR_MASK,
+			(QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_INT_AGGR_MASK,
 			cmpt_ctxt[4]));
 	ctxt->higher_dword.bit.dis_intr_on_vf = (uint8_t)
-			FIELD_GET(CMPL_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
+			QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_DIS_INTR_ON_VF_MASK,
 			cmpt_ctxt[4]);
-	ctxt->vio = (uint8_t)FIELD_GET(CMPL_CTXT_DATA_W4_VIO_MASK,
+	ctxt->vio = (uint8_t)QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_VIO_MASK,
 			cmpt_ctxt[4]);
 	ctxt->higher_dword.bit.dir_c2h =
-		(uint8_t)FIELD_GET(CMPL_CTXT_DATA_W4_DIR_C2H_MASK,
+		(uint8_t)QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_DIR_C2H_MASK,
 			cmpt_ctxt[4]);
 	ctxt->higher_dword.bit.host_id =
-		(uint8_t)FIELD_GET(CMPL_CTXT_DATA_W4_HOST_ID_MASK,
+		(uint8_t)QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_HOST_ID_MASK,
 			cmpt_ctxt[4]);
-	pasid_l = FIELD_GET(CMPL_CTXT_DATA_W4_PASID_L_MASK, cmpt_ctxt[4]);
+	pasid_l = QDMA_FIELD_GET(CMPL_CTXT_DATA_W4_PASID_L_MASK, cmpt_ctxt[4]);
 
-	pasid_h = (uint32_t)FIELD_GET(CMPL_CTXT_DATA_W5_PASID_H_MASK,
+	pasid_h = (uint32_t)QDMA_FIELD_GET(CMPL_CTXT_DATA_W5_PASID_H_MASK,
 			cmpt_ctxt[5]);
-	ctxt->pasid_en = (uint8_t)FIELD_GET(CMPL_CTXT_DATA_W5_PASID_EN_MASK,
+	ctxt->pasid_en = (uint8_t)QDMA_FIELD_GET(CMPL_CTXT_DATA_W5_PASID_EN_MASK,
 			cmpt_ctxt[5]);
-	baddr4_low = (uint8_t)FIELD_GET(
+	baddr4_low = (uint8_t)QDMA_FIELD_GET(
 			CMPL_CTXT_DATA_W5_BADDR4_LOW_MASK, cmpt_ctxt[5]);
-	ctxt->vio_eop = (uint8_t)FIELD_GET(CMPL_CTXT_DATA_W5_VIO_EOP_MASK,
+	ctxt->vio_eop = (uint8_t)QDMA_FIELD_GET(CMPL_CTXT_DATA_W5_VIO_EOP_MASK,
 			cmpt_ctxt[5]);
-	ctxt->sh_cmpt = (uint8_t)FIELD_GET(CMPL_CTXT_DATA_W5_SH_CMPT_MASK,
+	ctxt->sh_cmpt = (uint8_t)QDMA_FIELD_GET(CMPL_CTXT_DATA_W5_SH_CMPT_MASK,
 			cmpt_ctxt[5]);
 
 	ctxt->bs_addr =
-		FIELD_SET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_L_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_L_MASK,
 				(uint64_t)baddr4_high_l) |
-		FIELD_SET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_H_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_COMPL_CTXT_BADDR_HIGH_H_MASK,
 				(uint64_t)baddr4_high_h) |
-		FIELD_SET(EQDMA_CPM5_COMPL_CTXT_BADDR_LOW_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_COMPL_CTXT_BADDR_LOW_MASK,
 				(uint64_t)baddr4_low);
 
 	ctxt->pasid =
-		FIELD_SET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_L_MASK, pasid_l) |
-		FIELD_SET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_H_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_L_MASK, pasid_l) |
+		QDMA_FIELD_SET(EQDMA_CPM5_CMPL_CTXT_PASID_GET_H_MASK,
 				(uint64_t)pasid_h);
 
 	ctxt->pidx =
-		FIELD_SET(QDMA_COMPL_CTXT_PIDX_GET_L_MASK, pidx_l) |
-		FIELD_SET(QDMA_COMPL_CTXT_PIDX_GET_H_MASK, pidx_h);
+		QDMA_FIELD_SET(QDMA_COMPL_CTXT_PIDX_GET_L_MASK, pidx_l) |
+		QDMA_FIELD_SET(QDMA_COMPL_CTXT_PIDX_GET_H_MASK, pidx_h);
 
 	return QDMA_SUCCESS;
 }
@@ -4076,22 +4076,22 @@ static int eqdma_cpm5_hw_context_read(void *dev_hndl, uint8_t c2h,
 	if (rv < 0)
 		return rv;
 
-	ctxt->cidx = FIELD_GET(HW_IND_CTXT_DATA_W0_CIDX_MASK, hw_ctxt[0]);
+	ctxt->cidx = QDMA_FIELD_GET(HW_IND_CTXT_DATA_W0_CIDX_MASK, hw_ctxt[0]);
 	ctxt->crd_use =
-		(uint16_t)(FIELD_GET(HW_IND_CTXT_DATA_W0_CRD_USE_MASK,
+		(uint16_t)(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W0_CRD_USE_MASK,
 					hw_ctxt[0]));
 
 	ctxt->dsc_pend =
-		(uint8_t)(FIELD_GET(HW_IND_CTXT_DATA_W1_DSC_PND_MASK,
+		(uint8_t)(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W1_DSC_PND_MASK,
 					hw_ctxt[1]));
 	ctxt->idl_stp_b =
-		(uint8_t)(FIELD_GET(HW_IND_CTXT_DATA_W1_IDL_STP_B_MASK,
+		(uint8_t)(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W1_IDL_STP_B_MASK,
 			hw_ctxt[1]));
 	ctxt->evt_pnd =
-		(uint8_t)(FIELD_GET(HW_IND_CTXT_DATA_W1_EVT_PND_MASK,
+		(uint8_t)(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W1_EVT_PND_MASK,
 			hw_ctxt[1]));
 	ctxt->fetch_pnd = (uint8_t)
-		(FIELD_GET(HW_IND_CTXT_DATA_W1_FETCH_PND_MASK, hw_ctxt[1]));
+		(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W1_FETCH_PND_MASK, hw_ctxt[1]));
 
 	qdma_log_debug("%s: cidx=%hu, crd_use=%hu, dsc_pend=%x\n",
 			__func__, ctxt->cidx, ctxt->crd_use, ctxt->dsc_pend);
@@ -4238,7 +4238,7 @@ static int eqdma_cpm5_credit_context_read(void *dev_hndl, uint8_t c2h,
 	if (rv < 0)
 		return rv;
 
-	ctxt->credit = FIELD_GET(CRED_CTXT_DATA_W0_CREDT_MASK, cr_ctxt[0]);
+	ctxt->credit = QDMA_FIELD_GET(CRED_CTXT_DATA_W0_CREDT_MASK, cr_ctxt[0]);
 
 	qdma_log_debug("%s: credit=%u\n", __func__, ctxt->credit);
 
@@ -4377,9 +4377,9 @@ static int eqdma_cpm5_fmap_context_write(void *dev_hndl, uint16_t func_id,
 	qdma_log_debug("%s: func_id=%hu, qbase=%hu, qmax=%hu\n", __func__,
 				   func_id, config->qbase, config->qmax);
 	fmap[num_words_count++] =
-		FIELD_SET(EQDMA_CPM5_FMAP_CTXT_W0_QID_MASK, config->qbase);
+		QDMA_FIELD_SET(EQDMA_CPM5_FMAP_CTXT_W0_QID_MASK, config->qbase);
 	fmap[num_words_count++] =
-		FIELD_SET(EQDMA_CPM5_FMAP_CTXT_W1_QID_MAX_MASK,
+		QDMA_FIELD_SET(EQDMA_CPM5_FMAP_CTXT_W1_QID_MAX_MASK,
 		config->qmax);
 
 	return eqdma_cpm5_indirect_reg_write(dev_hndl, sel, func_id,
@@ -4415,9 +4415,9 @@ static int eqdma_cpm5_fmap_context_read(void *dev_hndl, uint16_t func_id,
 	if (rv < 0)
 		return rv;
 
-	config->qbase = FIELD_GET(EQDMA_CPM5_FMAP_CTXT_W0_QID_MASK,
+	config->qbase = QDMA_FIELD_GET(EQDMA_CPM5_FMAP_CTXT_W0_QID_MASK,
 					fmap[0]);
-	config->qmax = FIELD_GET(EQDMA_CPM5_FMAP_CTXT_W1_QID_MAX_MASK,
+	config->qmax = QDMA_FIELD_GET(EQDMA_CPM5_FMAP_CTXT_W1_QID_MAX_MASK,
 					fmap[1]);
 
 	qdma_log_debug("%s: func_id=%hu, qbase=%hu, qmax=%hu\n", __func__,
@@ -4519,42 +4519,42 @@ static int eqdma_cpm5_indirect_intr_context_write(void *dev_hndl,
 		return -QDMA_ERR_INV_PARAM;
 	}
 
-	baddr_l = (uint32_t)FIELD_GET(QDMA_INTR_CTXT_BADDR_GET_L_MASK,
+	baddr_l = (uint32_t)QDMA_FIELD_GET(QDMA_INTR_CTXT_BADDR_GET_L_MASK,
 			ctxt->baddr_4k);
-	baddr_m = (uint32_t)FIELD_GET(QDMA_INTR_CTXT_BADDR_GET_M_MASK,
+	baddr_m = (uint32_t)QDMA_FIELD_GET(QDMA_INTR_CTXT_BADDR_GET_M_MASK,
 			ctxt->baddr_4k);
-	baddr_h = (uint32_t)FIELD_GET(QDMA_INTR_CTXT_BADDR_GET_H_MASK,
+	baddr_h = (uint32_t)QDMA_FIELD_GET(QDMA_INTR_CTXT_BADDR_GET_H_MASK,
 			ctxt->baddr_4k);
 
 	pasid_l =
-		FIELD_GET(EQDMA_CPM5_INTR_CTXT_PASID_GET_L_MASK,
+		QDMA_FIELD_GET(EQDMA_CPM5_INTR_CTXT_PASID_GET_L_MASK,
 				ctxt->pasid);
 	pasid_h =
-		FIELD_GET(EQDMA_CPM5_INTR_CTXT_PASID_GET_H_MASK,
+		QDMA_FIELD_GET(EQDMA_CPM5_INTR_CTXT_PASID_GET_H_MASK,
 				ctxt->pasid);
 
 	intr_ctxt[num_words_count++] =
-		FIELD_SET(INTR_CTXT_DATA_W0_VALID_MASK, ctxt->valid) |
-		FIELD_SET(INTR_CTXT_DATA_W0_VEC_MASK, ctxt->vec) |
-		FIELD_SET(INTR_CTXT_DATA_W0_INT_ST_MASK, ctxt->int_st) |
-		FIELD_SET(INTR_CTXT_DATA_W0_COLOR_MASK, ctxt->color) |
-		FIELD_SET(INTR_CTXT_DATA_W0_BADDR_4K_L_MASK, baddr_l);
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W0_VALID_MASK, ctxt->valid) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W0_VEC_MASK, ctxt->vec) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W0_INT_ST_MASK, ctxt->int_st) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W0_COLOR_MASK, ctxt->color) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W0_BADDR_4K_L_MASK, baddr_l);
 
 	intr_ctxt[num_words_count++] =
-		FIELD_SET(INTR_CTXT_DATA_W1_BADDR_4K_M_MASK, baddr_m);
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W1_BADDR_4K_M_MASK, baddr_m);
 
 	intr_ctxt[num_words_count++] =
-		FIELD_SET(INTR_CTXT_DATA_W2_BADDR_4K_H_MASK, baddr_h) |
-		FIELD_SET(INTR_CTXT_DATA_W2_PAGE_SIZE_MASK, ctxt->page_size) |
-		FIELD_SET(INTR_CTXT_DATA_W2_PIDX_MASK, ctxt->pidx) |
-		FIELD_SET(INTR_CTXT_DATA_W2_AT_MASK, ctxt->at) |
-		FIELD_SET(INTR_CTXT_DATA_W2_HOST_ID_MASK, ctxt->host_id) |
-		FIELD_SET(INTR_CTXT_DATA_W2_PASID_L_MASK, pasid_l);
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W2_BADDR_4K_H_MASK, baddr_h) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W2_PAGE_SIZE_MASK, ctxt->page_size) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W2_PIDX_MASK, ctxt->pidx) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W2_AT_MASK, ctxt->at) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W2_HOST_ID_MASK, ctxt->host_id) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W2_PASID_L_MASK, pasid_l);
 
 	intr_ctxt[num_words_count++] =
-		FIELD_SET(INTR_CTXT_DATA_W3_PASID_H_MASK, pasid_h) |
-		FIELD_SET(INTR_CTXT_DATA_W3_PASID_EN_MASK, ctxt->pasid_en) |
-		FIELD_SET(INTR_CTXT_DATA_W3_FUNC_MASK, ctxt->func_id);
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W3_PASID_H_MASK, pasid_h) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W3_PASID_EN_MASK, ctxt->pasid_en) |
+		QDMA_FIELD_SET(INTR_CTXT_DATA_W3_FUNC_MASK, ctxt->func_id);
 
 	return eqdma_cpm5_indirect_reg_write(dev_hndl, sel, ring_index,
 			intr_ctxt, num_words_count);
@@ -4591,46 +4591,46 @@ static int eqdma_cpm5_indirect_intr_context_read(void *dev_hndl,
 	if (rv < 0)
 		return rv;
 
-	ctxt->valid = FIELD_GET(INTR_CTXT_DATA_W0_VALID_MASK, intr_ctxt[0]);
-	ctxt->vec = FIELD_GET(INTR_CTXT_DATA_W0_VEC_MASK, intr_ctxt[0]);
+	ctxt->valid = QDMA_FIELD_GET(INTR_CTXT_DATA_W0_VALID_MASK, intr_ctxt[0]);
+	ctxt->vec = QDMA_FIELD_GET(INTR_CTXT_DATA_W0_VEC_MASK, intr_ctxt[0]);
 	ctxt->int_st =
-		(uint8_t)(FIELD_GET(INTR_CTXT_DATA_W0_INT_ST_MASK,
+		(uint8_t)(QDMA_FIELD_GET(INTR_CTXT_DATA_W0_INT_ST_MASK,
 			intr_ctxt[0]));
 	ctxt->color =
-		(uint8_t)(FIELD_GET(INTR_CTXT_DATA_W0_COLOR_MASK,
+		(uint8_t)(QDMA_FIELD_GET(INTR_CTXT_DATA_W0_COLOR_MASK,
 			intr_ctxt[0]));
-	baddr_l = FIELD_GET(INTR_CTXT_DATA_W0_BADDR_4K_L_MASK, intr_ctxt[0]);
+	baddr_l = QDMA_FIELD_GET(INTR_CTXT_DATA_W0_BADDR_4K_L_MASK, intr_ctxt[0]);
 
-	baddr_m = FIELD_GET(INTR_CTXT_DATA_W1_BADDR_4K_M_MASK, intr_ctxt[1]);
+	baddr_m = QDMA_FIELD_GET(INTR_CTXT_DATA_W1_BADDR_4K_M_MASK, intr_ctxt[1]);
 
-	baddr_h = FIELD_GET(INTR_CTXT_DATA_W2_BADDR_4K_H_MASK, intr_ctxt[2]);
+	baddr_h = QDMA_FIELD_GET(INTR_CTXT_DATA_W2_BADDR_4K_H_MASK, intr_ctxt[2]);
 	ctxt->page_size =
-		FIELD_GET(INTR_CTXT_DATA_W2_PAGE_SIZE_MASK, intr_ctxt[2]);
+		QDMA_FIELD_GET(INTR_CTXT_DATA_W2_PAGE_SIZE_MASK, intr_ctxt[2]);
 	ctxt->pidx =
-		(uint16_t)(FIELD_GET(INTR_CTXT_DATA_W2_PIDX_MASK,
+		(uint16_t)(QDMA_FIELD_GET(INTR_CTXT_DATA_W2_PIDX_MASK,
 			intr_ctxt[2]));
 	ctxt->at =
-		(uint8_t)(FIELD_GET(INTR_CTXT_DATA_W2_AT_MASK, intr_ctxt[2]));
-	ctxt->host_id = (uint8_t)(FIELD_GET(INTR_CTXT_DATA_W2_HOST_ID_MASK,
+		(uint8_t)(QDMA_FIELD_GET(INTR_CTXT_DATA_W2_AT_MASK, intr_ctxt[2]));
+	ctxt->host_id = (uint8_t)(QDMA_FIELD_GET(INTR_CTXT_DATA_W2_HOST_ID_MASK,
 			intr_ctxt[2]));
-	pasid_l = (uint8_t)(FIELD_GET(INTR_CTXT_DATA_W2_PASID_L_MASK,
+	pasid_l = (uint8_t)(QDMA_FIELD_GET(INTR_CTXT_DATA_W2_PASID_L_MASK,
 			intr_ctxt[2]));
 
-	pasid_h = FIELD_GET(INTR_CTXT_DATA_W3_PASID_H_MASK, intr_ctxt[3]);
-	ctxt->pasid_en = (uint8_t)FIELD_GET(INTR_CTXT_DATA_W3_PASID_EN_MASK,
+	pasid_h = QDMA_FIELD_GET(INTR_CTXT_DATA_W3_PASID_H_MASK, intr_ctxt[3]);
+	ctxt->pasid_en = (uint8_t)QDMA_FIELD_GET(INTR_CTXT_DATA_W3_PASID_EN_MASK,
 			intr_ctxt[3]);
 
-	ctxt->func_id = (uint16_t)FIELD_GET(INTR_CTXT_DATA_W3_FUNC_MASK,
+	ctxt->func_id = (uint16_t)QDMA_FIELD_GET(INTR_CTXT_DATA_W3_FUNC_MASK,
 			intr_ctxt[3]);
 
 	ctxt->baddr_4k =
-		FIELD_SET(QDMA_INTR_CTXT_BADDR_GET_L_MASK, baddr_l) |
-		FIELD_SET(QDMA_INTR_CTXT_BADDR_GET_M_MASK, baddr_m) |
-		FIELD_SET(QDMA_INTR_CTXT_BADDR_GET_H_MASK, baddr_h);
+		QDMA_FIELD_SET(QDMA_INTR_CTXT_BADDR_GET_L_MASK, baddr_l) |
+		QDMA_FIELD_SET(QDMA_INTR_CTXT_BADDR_GET_M_MASK, baddr_m) |
+		QDMA_FIELD_SET(QDMA_INTR_CTXT_BADDR_GET_H_MASK, baddr_h);
 
 	ctxt->pasid =
-		FIELD_SET(EQDMA_CPM5_INTR_CTXT_PASID_GET_L_MASK, pasid_l) |
-		FIELD_SET(EQDMA_CPM5_INTR_CTXT_PASID_GET_H_MASK, pasid_h);
+		QDMA_FIELD_SET(EQDMA_CPM5_INTR_CTXT_PASID_GET_L_MASK, pasid_l) |
+		QDMA_FIELD_SET(EQDMA_CPM5_INTR_CTXT_PASID_GET_H_MASK, pasid_h);
 
 	return QDMA_SUCCESS;
 }
@@ -5599,7 +5599,7 @@ int eqdma_cpm5_hw_error_enable(void *dev_hndl, uint32_t err_idx)
 
 			reg_val = qdma_reg_read(dev_hndl,
 					EQDMA_CPM5_GLBL_ERR_MASK_ADDR);
-			reg_val |= FIELD_SET(
+			reg_val |= QDMA_FIELD_SET(
 				eqdma_cpm5_err_info[idx].global_err_mask,
 				1);
 			qdma_reg_write(dev_hndl,
@@ -5622,7 +5622,7 @@ int eqdma_cpm5_hw_error_enable(void *dev_hndl, uint32_t err_idx)
 		reg_val = qdma_reg_read(dev_hndl,
 				eqdma_cpm5_err_info[err_idx].mask_reg_addr);
 		reg_val |=
-			FIELD_SET(
+			QDMA_FIELD_SET(
 				eqdma_cpm5_err_info[err_idx].leaf_err_mask,
 				1);
 		qdma_reg_write(dev_hndl,
@@ -5632,7 +5632,7 @@ int eqdma_cpm5_hw_error_enable(void *dev_hndl, uint32_t err_idx)
 		reg_val = qdma_reg_read(dev_hndl,
 				EQDMA_CPM5_GLBL_ERR_MASK_ADDR);
 		reg_val |=
-			FIELD_SET
+			QDMA_FIELD_SET
 			(eqdma_cpm5_err_info[err_idx].global_err_mask, 1);
 		qdma_reg_write(dev_hndl, EQDMA_CPM5_GLBL_ERR_MASK_ADDR,
 				reg_val);
@@ -5669,13 +5669,13 @@ int eqdma_cpm5_get_device_attributes(void *dev_hndl,
 
 	/* number of PFs */
 	reg_val = qdma_reg_read(dev_hndl, QDMA_OFFSET_GLBL2_PF_BARLITE_INT);
-	dev_info->num_pfs = FIELD_GET(QDMA_GLBL2_PF0_BAR_MAP_MASK, reg_val);
+	dev_info->num_pfs = QDMA_FIELD_GET(QDMA_GLBL2_PF0_BAR_MAP_MASK, reg_val);
 
 	/* Number of Qs */
 	reg_val = qdma_reg_read(dev_hndl,
 			EQDMA_CPM5_GLBL2_CHANNEL_CAP_ADDR);
 	dev_info->num_qs =
-			FIELD_GET(GLBL2_CHANNEL_CAP_MULTIQ_MAX_MASK, reg_val);
+			QDMA_FIELD_GET(GLBL2_CHANNEL_CAP_MULTIQ_MAX_MASK, reg_val);
 
 	/* There are 12 bits assigned in EQDMA_CPM5_GLBL2_CHANNEL_CAP_ADDR
 	 * to represent the num_qs. For CPM5, max queues can be 4096 which needs
@@ -5687,24 +5687,24 @@ int eqdma_cpm5_get_device_attributes(void *dev_hndl,
 
 	/* FLR present */
 	reg_val = qdma_reg_read(dev_hndl, EQDMA_CPM5_GLBL2_MISC_CAP_ADDR);
-	dev_info->mailbox_en = FIELD_GET(EQDMA_CPM5_GLBL2_MAILBOX_EN_MASK,
+	dev_info->mailbox_en = QDMA_FIELD_GET(EQDMA_CPM5_GLBL2_MAILBOX_EN_MASK,
 		reg_val);
-	dev_info->flr_present = FIELD_GET(EQDMA_CPM5_GLBL2_FLR_PRESENT_MASK,
+	dev_info->flr_present = QDMA_FIELD_GET(EQDMA_CPM5_GLBL2_FLR_PRESENT_MASK,
 		reg_val);
 	dev_info->mm_cmpt_en  = 0;
-	dev_info->debug_mode = FIELD_GET(EQDMA_CPM5_GLBL2_DBG_MODE_EN_MASK,
+	dev_info->debug_mode = QDMA_FIELD_GET(EQDMA_CPM5_GLBL2_DBG_MODE_EN_MASK,
 		reg_val);
 	dev_info->desc_eng_mode =
-		FIELD_GET(EQDMA_CPM5_GLBL2_DESC_ENG_MODE_MASK,
+		QDMA_FIELD_GET(EQDMA_CPM5_GLBL2_DESC_ENG_MODE_MASK,
 		reg_val);
 
 	/* ST/MM enabled? */
 	reg_val = qdma_reg_read(dev_hndl,
 			EQDMA_CPM5_GLBL2_CHANNEL_MDMA_ADDR);
-	dev_info->st_en = (FIELD_GET(GLBL2_CHANNEL_MDMA_C2H_ST_MASK, reg_val)
-		&& FIELD_GET(GLBL2_CHANNEL_MDMA_H2C_ST_MASK, reg_val)) ? 1 : 0;
-	dev_info->mm_en = (FIELD_GET(GLBL2_CHANNEL_MDMA_C2H_ENG_MASK, reg_val)
-		&& FIELD_GET(GLBL2_CHANNEL_MDMA_H2C_ENG_MASK, reg_val)) ? 1 : 0;
+	dev_info->st_en = (QDMA_FIELD_GET(GLBL2_CHANNEL_MDMA_C2H_ST_MASK, reg_val)
+		&& QDMA_FIELD_GET(GLBL2_CHANNEL_MDMA_H2C_ST_MASK, reg_val)) ? 1 : 0;
+	dev_info->mm_en = (QDMA_FIELD_GET(GLBL2_CHANNEL_MDMA_C2H_ENG_MASK, reg_val)
+		&& QDMA_FIELD_GET(GLBL2_CHANNEL_MDMA_H2C_ENG_MASK, reg_val)) ? 1 : 0;
 
 	/* num of mm channels */
 	/* TODO : Register not yet defined for this.
@@ -6628,7 +6628,7 @@ static int eqdma_cpm5_global_writeback_interval_write(void *dev_hndl,
 	if (dev_cap.st_en || dev_cap.mm_cmpt_en) {
 		reg_val = qdma_reg_read(dev_hndl,
 				EQDMA_CPM5_GLBL_DSC_CFG_ADDR);
-		reg_val |= FIELD_SET(GLBL_DSC_CFG_WB_ACC_INT_MASK, wb_int);
+		reg_val |= QDMA_FIELD_SET(GLBL_DSC_CFG_WB_ACC_INT_MASK, wb_int);
 		qdma_reg_write(dev_hndl, EQDMA_CPM5_GLBL_DSC_CFG_ADDR,
 				reg_val);
 	} else {
@@ -6674,7 +6674,7 @@ static int eqdma_cpm5_global_writeback_interval_read(void *dev_hndl,
 	if (dev_cap.st_en || dev_cap.mm_cmpt_en) {
 		reg_val = qdma_reg_read(dev_hndl,
 				EQDMA_CPM5_GLBL_DSC_CFG_ADDR);
-		*wb_int = (enum qdma_wrb_interval)FIELD_GET(
+		*wb_int = (enum qdma_wrb_interval)QDMA_FIELD_GET(
 				GLBL_DSC_CFG_WB_ACC_INT_MASK, reg_val);
 	} else {
 		qdma_log_error("%s: ST or MM cmpt not supported, err:%d\n",

@@ -248,26 +248,26 @@ void qdma_fetch_version_details(void *dev_hndl, uint8_t is_vf,
 	}
 
 	if (!is_vf) {
-		rtl_version = FIELD_GET(QDMA_GLBL2_RTL_VERSION_MASK,
+		rtl_version = QDMA_FIELD_GET(QDMA_GLBL2_RTL_VERSION_MASK,
 				version_reg_val);
 		vivado_release_id =
-			FIELD_GET(QDMA_GLBL2_VIVADO_RELEASE_MASK,
+			QDMA_FIELD_GET(QDMA_GLBL2_VIVADO_RELEASE_MASK,
 					version_reg_val);
-		device_type = FIELD_GET(QDMA_GLBL2_DEVICE_ID_MASK,
+		device_type = QDMA_FIELD_GET(QDMA_GLBL2_DEVICE_ID_MASK,
 				version_reg_val);
-		ip_type = FIELD_GET(QDMA_GLBL2_VERSAL_IP_MASK,
+		ip_type = QDMA_FIELD_GET(QDMA_GLBL2_VERSAL_IP_MASK,
 				version_reg_val);
 	} else {
 		rtl_version =
-			FIELD_GET(QDMA_GLBL2_VF_RTL_VERSION_MASK,
+			QDMA_FIELD_GET(QDMA_GLBL2_VF_RTL_VERSION_MASK,
 					version_reg_val);
 		vivado_release_id =
-			FIELD_GET(QDMA_GLBL2_VF_VIVADO_RELEASE_MASK,
+			QDMA_FIELD_GET(QDMA_GLBL2_VF_VIVADO_RELEASE_MASK,
 					version_reg_val);
-		device_type = FIELD_GET(QDMA_GLBL2_VF_DEVICE_ID_MASK,
+		device_type = QDMA_FIELD_GET(QDMA_GLBL2_VF_DEVICE_ID_MASK,
 				version_reg_val);
 		ip_type =
-			FIELD_GET(QDMA_GLBL2_VF_VERSAL_IP_MASK,
+			QDMA_FIELD_GET(QDMA_GLBL2_VF_VERSAL_IP_MASK,
 					version_reg_val);
 	}
 
@@ -478,19 +478,19 @@ static int qdma_queue_cmpt_cidx_read(void *dev_hndl, uint8_t is_vf,
 	reg_val = qdma_reg_read(dev_hndl, reg_addr);
 
 	reg_info->wrb_cidx =
-		FIELD_GET(QDMA_DMAP_SEL_CMPT_WRB_CIDX_MASK, reg_val);
+		QDMA_FIELD_GET(QDMA_DMAP_SEL_CMPT_WRB_CIDX_MASK, reg_val);
 	reg_info->counter_idx =
-		(uint8_t)(FIELD_GET(QDMA_DMAP_SEL_CMPT_CNT_THRESH_MASK,
+		(uint8_t)(QDMA_FIELD_GET(QDMA_DMAP_SEL_CMPT_CNT_THRESH_MASK,
 			reg_val));
 	reg_info->wrb_en =
-		(uint8_t)(FIELD_GET(QDMA_DMAP_SEL_CMPT_STS_DESC_EN_MASK,
+		(uint8_t)(QDMA_FIELD_GET(QDMA_DMAP_SEL_CMPT_STS_DESC_EN_MASK,
 			reg_val));
 	reg_info->irq_en =
-		(uint8_t)(FIELD_GET(QDMA_DMAP_SEL_CMPT_IRQ_EN_MASK, reg_val));
+		(uint8_t)(QDMA_FIELD_GET(QDMA_DMAP_SEL_CMPT_IRQ_EN_MASK, reg_val));
 	reg_info->timer_idx =
-		(uint8_t)(FIELD_GET(QDMA_DMAP_SEL_CMPT_TMR_CNT_MASK, reg_val));
+		(uint8_t)(QDMA_FIELD_GET(QDMA_DMAP_SEL_CMPT_TMR_CNT_MASK, reg_val));
 	reg_info->trig_mode =
-		(uint8_t)(FIELD_GET(QDMA_DMAP_SEL_CMPT_TRG_MODE_MASK, reg_val));
+		(uint8_t)(QDMA_FIELD_GET(QDMA_DMAP_SEL_CMPT_TRG_MODE_MASK, reg_val));
 
 	return QDMA_SUCCESS;
 }
@@ -592,7 +592,7 @@ static int qdma_is_config_bar(void *dev_hndl, uint8_t is_vf, enum qdma_ip *ip)
 	 *  comes up with a common register for VFs
 	 */
 	if (is_vf) {
-		if (FIELD_GET(QDMA_GLBL2_VF_UNIQUE_ID_MASK, reg_val)
+		if (QDMA_FIELD_GET(QDMA_GLBL2_VF_UNIQUE_ID_MASK, reg_val)
 				!= QDMA_MAGIC_NUMBER) {
 			/* Its either QDMA or Versal */
 
@@ -610,7 +610,7 @@ static int qdma_is_config_bar(void *dev_hndl, uint8_t is_vf, enum qdma_ip *ip)
 		}
 	}
 
-	if (FIELD_GET(QDMA_CONFIG_BLOCK_ID_MASK, reg_val)
+	if (QDMA_FIELD_GET(QDMA_CONFIG_BLOCK_ID_MASK, reg_val)
 			!= QDMA_MAGIC_NUMBER) {
 		qdma_log_error("%s: Invalid config bar, err:%d\n",
 					__func__,
@@ -1246,8 +1246,8 @@ static int qdma_hw_error_intr_setup(void *dev_hndl, uint16_t func_id,
 	}
 
 	reg_val =
-		FIELD_SET(QDMA_GLBL_ERR_FUNC_MASK, func_id) |
-		FIELD_SET(QDMA_GLBL_ERR_VEC_MASK, err_intr_index);
+		QDMA_FIELD_SET(QDMA_GLBL_ERR_FUNC_MASK, func_id) |
+		QDMA_FIELD_SET(QDMA_GLBL_ERR_VEC_MASK, err_intr_index);
 
 	qdma_reg_write(dev_hndl, QDMA_OFFSET_GLBL_ERR_INT, reg_val);
 
@@ -1273,7 +1273,7 @@ static int qdma_hw_error_intr_rearm(void *dev_hndl)
 	}
 
 	reg_val = qdma_reg_read(dev_hndl, QDMA_OFFSET_GLBL_ERR_INT);
-	reg_val |= FIELD_SET(QDMA_GLBL_ERR_ARM_MASK, 1);
+	reg_val |= QDMA_FIELD_SET(QDMA_GLBL_ERR_ARM_MASK, 1);
 
 	qdma_reg_write(dev_hndl, QDMA_OFFSET_GLBL_ERR_INT, reg_val);
 

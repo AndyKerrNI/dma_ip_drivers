@@ -71,7 +71,9 @@ static inline uint32_t get_trailing_zeros(uint64_t value)
 #endif
 
 #define FIELD_SHIFT(mask)       get_trailing_zeros(mask)
-#define FIELD_SET(mask, val)    ((val << FIELD_SHIFT(mask)) & mask)
+#define QDMA_FIELD_SET(mask, val)    ((val << FIELD_SHIFT(mask)) & mask)
+#define QDMA_FIELD_GET(mask, reg)    ((reg & mask) >> FIELD_SHIFT(mask))
+
 
 /* CSR Default values */
 #define DEFAULT_MAX_DSC_FETCH               6
