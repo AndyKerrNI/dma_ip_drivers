@@ -900,7 +900,7 @@ static struct xlnx_qdata *xnl_rcv_check_qidx(struct genl_info *info,
 			XNL_ERR_BUFLEN,
 			"ERR! qidx %u invalid.\n",
 			qconf->qidx);
-		xnl_respond_buffer(info, ebuf, XNL_ERR_BUFLEN, 0);
+		xnl_respond_buffer(info, ebuf, XNL_ERR_BUFLEN, -EINVAL);
 	}
 
 	return qdata;
