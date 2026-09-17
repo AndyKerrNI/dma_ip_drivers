@@ -2,7 +2,7 @@
 # * This file is part of the Xilinx DMA IP Core driver for Linux
 # *
 # * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
-# * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+# * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
 # *
 # * This source code is free software; you can redistribute it and/or modify it
 # * under the terms and conditions of the GNU General Public License,
@@ -47,7 +47,8 @@ MOD_NAME := qdma$(PFVF_TYPE)
 ccflags-y += -DLINUX -D__KERNEL__ -DMODULE -O2 -pipe -Wall -Werror
 ccflags-y += $(FLAGS) $(CPPFLAGS) $(EXTRA_FLAGS)
 ccflags-y += -I$(srcdir)/../include
-ccflags-y += -I$(KSRC)/../include
+ccflags-y += -I$(srcdir)/../libqdma
+ccflags-y += -I$(srcdir)/../libqdma/qdma_access
 ccflags-y += -I$(srcdir)/../libqdma/qdma_access/qdma_soft_access
 ccflags-y += -I$(srcdir)/../libqdma/qdma_access/eqdma_soft_access
 ccflags-y += -I$(srcdir)/../libqdma/qdma_access/eqdma_cpm5_access
@@ -99,6 +100,9 @@ else
 endif
 
 DRV_OBJS := nl.o cdev.o qdma_mod.o
+ifeq ($(USER_EXTRA_SUPPORTED), 1)
+DRV_OBJS += ../user_extra/user_extra.o
+endif
 
 LIBQDMA_OBJS := libqdma/qdma_mbox.o libqdma/qdma_intr.o libqdma/qdma_st_c2h.o \
 	libqdma/qdma_thread.o libqdma/libqdma_export.o libqdma/qdma_context.o \

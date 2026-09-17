@@ -2,7 +2,7 @@
  * BSD LICENSE
  *
  * Copyright (c) 2017-2022 Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1367,7 +1367,6 @@ uint16_t qdma_xmit_pkts_mm(struct qdma_tx_queue *txq,
 		len = rte_pktmbuf_data_len(mb);
 		PMD_DRV_LOG(DEBUG, "xmit number of bytes:%ld, count:%d ",
 				len, count);
-
 #ifndef TANDEM_BOOT_SUPPORTED
 		txq->ep_addr = (txq->ep_addr + len) % DMA_BRAM_SIZE;
 #endif

@@ -3,7 +3,7 @@
  * to enable the user to execute the QDMA functionality
  *
  * Copyright (c) 2018-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is licensed under BSD-style license (found in the
  * LICENSE file in the root directory of this source tree)
@@ -188,6 +188,7 @@ struct io_info {
 	unsigned int pipe_slr_id;
 	unsigned int pipe_tdest;
 	unsigned int mm_chnl;
+	unsigned int mm_host_id;
 	int keyhole_en;
 	unsigned int aperture_sz;
 	unsigned long int offset;
@@ -221,15 +222,10 @@ static unsigned int pkt_sz = 0;
 static unsigned int num_pkts;
 static int keyhole_en = 0;
 static unsigned int aperture_sz = 0;
-/* For MM Channel =0 or 1 , offset is used for both MM Channels */
-static unsigned long int offset_ch0 = 0;
-/*In MM Channel interleaving offset_ch1 is the offset used for Channel 1*/
-static unsigned long int offset_ch1 = 0;
-static int offset_q_en= 0;
-static unsigned long int h2c_q_offset_intvl = 0;
-static unsigned long int c2h_q_offset_intvl = 0;
-static unsigned long int h2c_q_start_offset= 0;
-static unsigned long int c2h_q_start_offset= 0;
+static unsigned long int offset_h2c_0 = 0;
+static unsigned long int offset_h2c_1 = 0;
+static unsigned long int offset_c2h_0 = 0;
+static unsigned long int offset_c2h_1 = 0;
 static unsigned int tsecs = 0;
 struct io_info *info = NULL;
 static char cfg_name[20];
@@ -302,14 +298,6 @@ static int arg_read_long_uint(char *s, uint64_t *v)
     return 0;
 }
 
-static int update_q_off(struct io_info *info)
-{
-	if (info->dir == Q_DIR_H2C) {
-		info->offset += h2c_q_start_offset + (info->qid * h2c_q_offset_intvl);
-	} else {
-		info->offset += c2h_q_start_offset + (info->qid * c2h_q_offset_intvl);
-	}
-}
 
 static int arg_read_int_array(char *s, unsigned int *v, unsigned int max_arr_size)
 {
@@ -677,12 +665,14 @@ static void create_thread_info(void)
 							keyhole_en) {
 						_info[base].aperture_sz = aperture_sz;
 					}
-					if(mm_chnl == MM_CHANNEL_INTERLEAVE && _info[base].mm_chnl )
-						_info[base].offset = offset_ch1;
-					else
-						_info[base].offset = offset_ch0;
-					if(offset_q_en)
-						update_q_off(&_info[base]);
+					if(mm_chnl == MM_CHANNEL_INTERLEAVE && _info[base].mm_chnl ) {
+						_info[base].offset = offset_h2c_1;
+						_info[base].mm_host_id =  _info[base].mm_chnl;
+					} else {
+						_info[base].offset = offset_h2c_0;
+						_info[base].mm_host_id = _info[base].mm_chnl;
+					}
+
 #if THREADS_SET_CPU_AFFINITY
 					_info[base].cpu = h2c_cpu;
 #endif
@@ -712,12 +702,14 @@ static void create_thread_info(void)
 						_info[base].mm_chnl = _info[base].qid % 2;
 					else
 						_info[base].mm_chnl = mm_chnl;
-					if(mm_chnl == MM_CHANNEL_INTERLEAVE && _info[base].mm_chnl )
-						_info[base].offset = offset_ch1;
-					else
-						_info[base].offset = offset_ch0;
-					if(offset_q_en)
-						update_q_off(&_info[base]);
+					if(mm_chnl == MM_CHANNEL_INTERLEAVE && _info[base].mm_chnl ) {
+						_info[base].offset = offset_c2h_1;
+						_info[base].mm_host_id = _info[base].mm_chnl;
+					} else {
+						_info[base].offset = offset_c2h_0;
+						_info[base].mm_host_id = _info[base].mm_chnl;
+					}
+
 
 					_info[base].pkt_sz = pkt_sz;
 #if THREADS_SET_CPU_AFFINITY
@@ -916,39 +908,24 @@ static void parse_config_file(const char *cfg_fname)
 				printf("Error: Invalid aperture size:%s\n", value);
 				goto prase_cleanup;
 			}
-		} else if (!strncmp(config, "offset_ch1", 10)) {
-			if (arg_read_long_uint(value, &offset_ch1)) {
-				printf("Error: Invalid aperture offset:%s\n", value);
+		} else if (!strncmp(config, "offset_h2c_0", 12)) {
+			if (arg_read_long_uint(value, &offset_h2c_0)) {
+				printf("Error: Invalid offset_h2c_0:%s\n", value);
 				goto prase_cleanup;
 			}
-		} else if (!strncmp(config, "offset_q_en", 11)) {
-			if (arg_read_int(value, &offset_q_en)) {
-				printf("Error: Invalid offset_q_en option:%s\n", value);
+		} else if (!strncmp(config, "offset_h2c_1", 12)) {
+			if (arg_read_long_uint(value, &offset_h2c_1)) {
+				printf("Error: Invalid offset_h2c_1 option:%s\n", value);
 				goto prase_cleanup;
 			}
-		} else if (!strncmp(config, "h2c_q_offset_intvl", 18)) {
-			if (arg_read_long_uint(value, &h2c_q_offset_intvl)) {
-				printf("Error: Invalid H2C q offset:%s\n", value);
+		} else if (!strncmp(config, "offset_c2h_0", 12)) {
+			if (arg_read_long_uint(value, &offset_c2h_0)) {
+				printf("Error: Invalid offset_c2h_0:%s\n", value);
 				goto prase_cleanup;
 			}
-		} else if (!strncmp(config, "c2h_q_offset_intvl", 18)) {
-			if (arg_read_long_uint(value, &c2h_q_offset_intvl)) {
-				printf("Error: Invalid C2H q offset:%s\n", value);
-				goto prase_cleanup;
-			}
-		} else if (!strncmp(config, "h2c_q_start_offset", 18)) {
-			if (arg_read_long_uint(value, &h2c_q_start_offset)) {
-				printf("Error: Invalid H2C q offset:%s\n", value);
-				goto prase_cleanup;
-			}
-		} else if (!strncmp(config, "c2h_q_start_offset", 18)) {
-			if (arg_read_long_uint(value, &c2h_q_start_offset)) {
-				printf("Error: Invalid H2C q offset:%s\n", value);
-				goto prase_cleanup;
-			}
-		} else if (!strncmp(config, "offset_ch0", 10)) {
-			if (arg_read_long_uint(value, &offset_ch0)) {
-				printf("Error: Invalid aperture offset:%s\n", value);
+		} else if (!strncmp(config, "offset_c2h_1", 12)) {
+			if (arg_read_long_uint(value, &offset_c2h_1)) {
+				printf("Error: Invalid offset_c2h_1:%s\n", value);
 				goto prase_cleanup;
 			}
 		} else if (!strncmp(config, "keyhole_en", 7)) {
@@ -1554,6 +1531,8 @@ static int qdma_prepare_q_start(struct xcmd_info *xcmd,
 	if (info->mode == Q_MODE_MM) {
 		qparm->mm_channel = info->mm_chnl;
 		f_arg_set |= 1 <<QPARM_MM_CHANNEL;
+		qparm->mm_hostid = info->mm_host_id;
+		f_arg_set |= 1 <<QPARM_MM_HOST_ID;
 	}
 
 

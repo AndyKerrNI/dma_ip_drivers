@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -4152,7 +4152,7 @@ static int eqdma_hw_context_read(void *dev_hndl, uint8_t c2h,
 		(uint8_t)(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W1_EVT_PND_MASK,
 			hw_ctxt[1]));
 	ctxt->fetch_pnd = (uint8_t)
-		(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W1_DSC_PND_MASK, hw_ctxt[1]));
+		(QDMA_FIELD_GET(HW_IND_CTXT_DATA_W1_FETCH_PND_MASK, hw_ctxt[1]));
 
 	qdma_log_debug("%s: cidx=%hu, crd_use=%hu, dsc_pend=%x\n",
 			__func__, ctxt->cidx, ctxt->crd_use, ctxt->dsc_pend);

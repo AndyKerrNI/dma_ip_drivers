@@ -2,7 +2,7 @@
  * This file is part of the Xilinx DMA IP Core driver for Linux
  *
  * Copyright (c) 2017-2022, Xilinx, Inc. All rights reserved.
- * Copyright (c) 2022-2024, Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2022-2026, Advanced Micro Devices, Inc. All rights reserved.
  *
  * This source code is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -139,10 +139,11 @@ int qdma_device_write_config_register(unsigned long dev_hndl,
 
 int qdma_csr_read(struct xlnx_dma_dev *xdev, struct global_csr_conf *csr)
 {
-	struct mbox_msg *m = qdma_mbox_msg_alloc();
+	struct mbox_msg *m = NULL;
 	int rv, i;
 	struct qdma_csr_info csr_info;
 
+	m = qdma_mbox_msg_alloc();
 	if (!m)
 		return -ENOMEM;
 
